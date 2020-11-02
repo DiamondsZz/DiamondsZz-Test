@@ -1,6 +1,4 @@
 
-
-console.dir(Vue)
 let _Vue = null
 class VueRouter {
     static install(Vue){
