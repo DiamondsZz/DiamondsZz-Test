@@ -1,0 +1,159 @@
+.index {
+  display: flex;
+  justify-content: center;
+}
+.recommend {
+  width: 100vw;
+  max-width: 425px;
+  min-width: 320px;
+  height: 100vh;
+  background: #f9f9f9;
+}
+.recommend /deep/ .van-list {
+  padding: 15px 15px 0;
+  background: #f9f9f9;
+}
+.recommend .item {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 12px;
+  margin-bottom: 15px;
+  display: flex;
+}
+.recommend .item .item-img {
+  margin-right: 8px;
+  width: 112px;
+  height: 112px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.recommend .item .item-des {
+  flex-grow: 1;
+}
+.recommend .item .item-des .item-til {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 14px;
+  color: #111111;
+  line-height: 24px;
+  margin-bottom: 14px;
+}
+.recommend .item .item-des .item-money {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.recommend .item .item-des .item-money .item-money-item {
+  font-size: 12px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #666;
+}
+.recommend .item .item-des .item-money .item-money-item .item-money-text {
+  color: #ff415c;
+}
+.recommend .item .item-des .item-action {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.recommend .item .item-des .item-action .item-action-item {
+  font-size: 12px;
+  color: #ff415c;
+  font-family: PingFangSC-Semibold, PingFang SC;
+  font-weight: 600;
+}
+.recommend .item .item-des .item-action .item-action-btn /deep/ .van-button {
+  width: 104px;
+  height: 24px;
+  padding: 0;
+  line-height: 24px;
+  text-align: center;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #ffffff !important;
+  transform: scale(0.9);
+}
+.recommend .copy-dialog {
+  width: 248px;
+  height: 204px;
+}
+.recommend .copy-dialog .copy-dialog-text {
+  text-align: center;
+  padding: 15px 28px 24px;
+  font-size: 14px;
+  line-height: 24px;
+}
+.recommend .copy-dialog .copy-dialog-text .copy-dialog-command {
+  color: #ff415c;
+  margin: 0 8px;
+}
+.recommend .copy-dialog /deep/ .van-dialog__footer {
+  height: 46px;
+}
+.recommend .copy-dialog /deep/ .van-dialog__footer .van-button__text {
+  color: #ff415c;
+}
+.recommend .copy-dialog /deep/ .van-button {
+  height: 46px;
+  font-size: 14px;
+}
+@media screen and (max-width: 375px) {
+  .recommend /deep/ .van-list {
+    padding: 4vw 4vw 0;
+  }
+  .recommend .item {
+    border-radius: 4.26666667vw;
+    padding: 3.2vw;
+    margin-bottom: 4vw;
+  }
+  .recommend .item .item-img {
+    margin-right: 2.13333333vw;
+    width: 29.86666667vw;
+    height: 29.86666667vw;
+    border-radius: 1.06666667vw;
+  }
+  .recommend .item .item-des .item-til {
+    font-size: 3.73333333vw;
+    line-height: 6.4vw;
+    margin-bottom: 3.73333333vw;
+  }
+  .recommend .item .item-des .item-money {
+    margin-bottom: 4.26666667vw;
+  }
+  .recommend .item .item-des .item-money .item-money-item {
+    font-size: 3.2vw;
+  }
+  .recommend .item .item-des .item-action .item-action-btn /deep/ .van-button {
+    width: 27.73333333vw;
+    height: 6.4vw;
+    line-height: 6.4vw;
+    border-radius: 1.6vw;
+    font-size: 3.2vw;
+  }
+  .copy-dialog {
+    width: 66.13333333vw;
+    height: 54.4vw;
+  }
+  .copy-dialog .copy-dialog-text {
+    padding: 4vw 7.46666667vw 6.4vw;
+    font-size: 3.73333333vw;
+    line-height: 6.4vw;
+  }
+  .copy-dialog .copy-dialog-text .copy-dialog-command {
+    margin: 0 2.13333333vw;
+  }
+  .copy-dialog /deep/ .van-dialog__footer {
+    height: 12.26666667vw;
+  }
+  .copy-dialog /deep/ .van-button {
+    height: 12.26666667vw;
+    font-size: 3.73333333vw;
+  }
+}

@@ -1,0 +1,173 @@
+.index {
+    display: flex;
+    justify-content: center;
+  }
+  .recommend {
+    width: 100vw;
+    max-width: 425px;
+    min-width: 320px;
+    height: 100vh;
+    background: #f9f9f9;
+    /deep/ .van-list {
+      padding: 15px 15px 0;
+      background: #f9f9f9;
+    }
+    .item {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 12px;
+      margin-bottom: 15px;
+      display: flex;
+      .item-img {
+        margin-right: 8px;
+        width: 112px;
+        height: 112px;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        border-radius: 4px;
+        flex-shrink: 0;
+      }
+      .item-des {
+        flex-grow: 1;
+        .item-til {
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 2;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          font-size: 14px;
+          color: #111111;
+          line-height: 24px;
+          margin-bottom: 14px;
+        }
+        .item-money {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 16px;
+          .item-money-item {
+            font-size: 12px;
+            font-family: PingFangSC-Regular, PingFang SC;
+            font-weight: 400;
+            color: #666;
+            .item-money-text {
+              color: #ff415c;
+            }
+          }
+        }
+        .item-action {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          .item-action-item {
+            font-size: 12px;
+            color: #ff415c;
+            font-family: PingFangSC-Semibold, PingFang SC;
+            font-weight: 600;
+          }
+          .item-action-btn {
+            /deep/ .van-button {
+              width: 104px;
+              height: 24px;
+              padding: 0;
+              line-height: 24px;
+              text-align: center;
+              border-radius: 6px;
+              font-size: 12px;
+              color: rgba(256, 256, 256, 1) !important;
+              transform: scale(0.9);
+            }
+          }
+        }
+      }
+    }
+  
+    .copy-dialog {
+      width: 248px;
+      height: 204px;
+      .copy-dialog-text {
+        text-align: center;
+        padding: 15px 28px 24px;
+        font-size: 14px;
+        line-height: 24px;
+        .copy-dialog-command {
+          color: #ff415c;
+          margin: 0 8px;
+        }
+      }
+      /deep/ .van-dialog__footer {
+        height: 46px;
+        .van-button__text{
+          color: #ff415c;
+        }
+      }
+      /deep/ .van-button {
+        height: 46px;
+        font-size: 14px;
+      }
+    }
+  }
+  
+  //375px以下适配
+  @screen: 3.75;
+  @media screen and(max-width:375px) {
+    .recommend {
+      /deep/ .van-list {
+        padding: 15vw / @screen 15vw / @screen 0;
+      }
+      .item {
+        border-radius: 16vw / @screen;
+        padding: 12vw / @screen;
+        margin-bottom: 15vw / @screen;
+        .item-img {
+          margin-right: 8vw / @screen;
+          width: 112vw / @screen;
+          height: 112vw / @screen;
+          border-radius: 4vw / @screen;
+        }
+        .item-des {
+          .item-til {
+            font-size: 14vw / @screen;
+            line-height: 24vw / @screen;
+            margin-bottom: 14vw / @screen;
+          }
+          .item-money {
+            margin-bottom: 16vw / @screen;
+            .item-money-item {
+              font-size: 12vw / @screen;
+            }
+          }
+          .item-action {
+            .item-action-btn {
+              /deep/ .van-button {
+                width: 104vw / @screen;
+                height: 24vw / @screen;
+                line-height: 24vw / @screen;
+                border-radius: 6vw / @screen;
+                font-size: 12vw / @screen;
+              }
+            }
+          }
+        }
+      }
+    }
+    .copy-dialog {
+      width: 248vw / @screen;
+      height: 204vw / @screen;
+      .copy-dialog-text {
+        padding: 15vw / @screen 28vw / @screen 24vw / @screen;
+        font-size: 14vw / @screen;
+        line-height: 24vw / @screen;
+        .copy-dialog-command {
+          margin: 0 8vw / @screen;
+        }
+      }
+      /deep/ .van-dialog__footer {
+        height: 46vw / @screen;
+      }
+      /deep/ .van-button {
+        height: 46vw / @screen;
+        font-size: 14vw / @screen;
+      }
+    }
+  }
