@@ -22,7 +22,6 @@
             var selection = getSelection()
             // 设置最后光标对象
             lastEditRange = selection.getRangeAt(0)
-            console.log(lastEditRange);
         }
 
         // 编辑框按键弹起事件
@@ -82,6 +81,7 @@
                 var range = selection.getRangeAt(0)
                 // 获取光标对象的范围界定对象，一般就是textNode对象
                 var textNode = range.startContainer;
+                console.log(textNode);
                 // 获取光标位置
                 var rangeStartOffset = range.startOffset;
                 // 文本节点在光标位置处插入新的表情内容

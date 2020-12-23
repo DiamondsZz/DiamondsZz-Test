@@ -1,0 +1,22 @@
+/*省略号*/
+
+.diamonds-ellipsis {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.diamonds-ellipsis-multiple {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+/*必须*/
+
+.diamonds-must {
+    margin-right: 4px;
+    color: #FF415C;
+    font-family: SimSun, sans-serif;
+}
+
