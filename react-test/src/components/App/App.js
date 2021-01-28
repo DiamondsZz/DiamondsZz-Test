@@ -15,7 +15,6 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = store.getState();
-    this.add = this.add.bind(this);
   }
   add() {
     store.dispatch({ type: "add" });
@@ -26,7 +25,7 @@ class App extends React.Component {
       <div className="App">
         <button>- </button>
         {this.state.value}
-        <button onClick={this.add}>+ </button>
+        <button onClick={()=>{this.add()}}>+ </button>
       </div>
     );
   }
