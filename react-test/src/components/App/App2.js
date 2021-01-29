@@ -1,5 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import * as countActions from "../../store/actions/count.action";
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -7,22 +9,17 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <button>-</button>
+        <button onClick={this.props.countReduce}>-</button>
         {this.props.value}
-        <button onClick={this.props.add}>+</button>
+        <button onClick={this.props.countAdd}>+</button>
       </div>
     );
   }
 }
-
-const mapStateToProps = (state) => {
-  return {
-    value: state.count.value,
-  };
-};
-const mapDispatchToProps = (dispatch) => ({
-  add() {
-    dispatch({ type: "add" });
-  },
+const mapStateToProps = (state) => ({
+  value: state.count.value,
 });
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(countActions, dispatch);
+
 export default connect(mapStateToProps, mapDispatchToProps)(App);
