@@ -14,9 +14,12 @@ class App extends React.Component {
     );
   }
 }
-const mapStateToProps = (state) => ({
-  value: state.value,
-});
+
+const mapStateToProps = (state) => {
+  return {
+    value: state.count.value,
+  };
+};
 const mapDispatchToProps = (dispatch) => ({
   add() {
     dispatch({ type: "add" });
