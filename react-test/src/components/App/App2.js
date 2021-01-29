@@ -16,6 +16,7 @@ class App extends React.Component {
     );
   }
 }
+
 const mapStateToProps = (state) => ({
   value: state.count.value,
 });
