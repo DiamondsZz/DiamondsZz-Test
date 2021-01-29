@@ -1,10 +1,7 @@
 //add action
-export const countAdd = () => {
-  return (dispatch) => {
-    setTimeout(() => {
-      dispatch({ type: "add" });
-    }, 2000);
-  };
-};
+export const countAdd = () => ({ type: "add" });
+
 //reduce action
 export const countReduce = () => ({ type: "reduce" });
+
+
