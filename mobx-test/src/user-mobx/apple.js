@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { observer } from 'mobx-react';
+import React, { Component } from "react";
+import { inject, observer } from "mobx-react";
 
 @observer
 class AppleItem extends Component {
@@ -8,7 +8,7 @@ class AppleItem extends Component {
     return (
       <div className="appleItem">
         <div className="apple">
-          <img src={require('../images/apple.png')} alt="" />
+          <img src={require("../images/apple.png")} alt="" />
         </div>
         <div className="info">
           <div className="name">红苹果 - {apple.id}号</div>
@@ -22,11 +22,12 @@ class AppleItem extends Component {
   }
 }
 
+@inject("store")
 @observer
 class Apple extends Component {
-  getAppleItem() {
+  getAppleItem(apples) {
     let data = [];
-    this.props.store.apples.forEach(apple => {
+    apples.forEach((apple) => {
       if (!apple.isEaten) {
         data.push(
           <AppleItem
@@ -37,14 +38,14 @@ class Apple extends Component {
         );
       }
     });
-    if (!data.length) return <div>its empth</div>;
+    if (!data.length) return <div>it is empty</div>;
     return data;
   }
   render() {
-    let { status } = this.props.store;
+    let { status, apples } = this.props.store;
     let {
       appleNow: { quantity: notEatenQuantity, weight: notEatenWeight },
-      appleEaten: { quantity: EatenQuantity, weight: EatenWeight }
+      appleEaten: { quantity: EatenQuantity, weight: EatenWeight },
     } = status;
     return (
       <div className="appleBusket">
@@ -65,7 +66,7 @@ class Apple extends Component {
           </div>
         </div>
 
-        <div className="appleList">{this.getAppleItem()}</div>
+        <div className="appleList">{this.getAppleItem(apples)}</div>
 
         {/* <div className="btn-div">
                 <button  className={isPicking ? 'disabled' : ''}  onClick={() => pickApple() } >{buttonText}</button>
