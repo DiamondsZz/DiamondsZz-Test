@@ -38,11 +38,12 @@ class Apple extends Component {
         );
       }
     });
-    if (!data.length) return <div>it is empty</div>;
+    if (!data.length)
+      return <div style={{ textAlign: "center" }}>都被你给吃完了</div>;
     return data;
   }
   render() {
-    let { status, apples } = this.props.store;
+    let { status, apples, pickApple, buttonText } = this.props.store;
     let {
       appleNow: { quantity: notEatenQuantity, weight: notEatenWeight },
       appleEaten: { quantity: EatenQuantity, weight: EatenWeight },
@@ -68,9 +69,9 @@ class Apple extends Component {
 
         <div className="appleList">{this.getAppleItem(apples)}</div>
 
-        {/* <div className="btn-div">
-                <button  className={isPicking ? 'disabled' : ''}  onClick={() => pickApple() } >{buttonText}</button>
-            </div> */}
+        <div className="btn-div">
+          <button onClick={pickApple}>{buttonText}</button>
+        </div>
       </div>
     );
   }

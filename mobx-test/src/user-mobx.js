@@ -24,6 +24,8 @@ class appleStore {
       isEaten: false,
     },
   ];
+  @observable
+  buttonText = "摘苹果";
   @computed
   get status() {
     let status = {
@@ -37,7 +39,7 @@ class appleStore {
       },
     };
     this.apples.forEach((apple) => {
-      let selected = apple.isEaten ? "appleNow" : "appleEaten";
+      let selected = apple.isEaten ? "appleEaten" : "appleNow";
       status[selected].quantity++;
       status[selected].weight += apple.weight;
     });
@@ -50,7 +52,18 @@ class appleStore {
         this.apples[index].isEaten = true;
       }
     });
-    console.log(this.apples);
+  };
+
+  @action
+  pickApple = () => {
+    this.apples = [
+      ...this.apples,
+      {
+        id: this.apples[this.apples.length - 1].id + 1,
+        weight: Math.ceil(Math.random() * 100 + 100),
+        isEaten: false,
+      },
+    ];
   };
 }
 const store = new appleStore();
