@@ -1,12 +1,4 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import App from "./App";
-import {Provider}   from "mobx-react"
-import countStore from "./stores/countStore"
-
-ReactDOM.render(
-  <Provider countStore={countStore}>
-    <App />
-  </Provider>,
-  document.getElementById("root")
-);
+// import index from './index_redux';
+// import index from './index_mobx';
+// import userMobx from './user-mobx';
+import "./user-redux";
