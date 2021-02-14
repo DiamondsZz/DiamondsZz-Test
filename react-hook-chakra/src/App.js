@@ -10,17 +10,17 @@ import {
 import Signin from "./Signin";
 function App() {
   return (
-    <Box bgColor="gray.200" h="100vh" py="100px">
-      <Box w={500} mx="auto" bgColor="white" borderRadius="md">
-        <Tabs isFitted>
-          <TabList px={150}>
-            <Tab _focus={{ boxShadow: "none" }}>登录</Tab>
+    <Box bgColor="#f1f1f1" h="100vh" py="100px">
+      <Box w={400} mx="auto"  py={10}  bgColor="white" borderRadius="md" boxShadow="md">
+        <Tabs isFitted colorScheme="red" size="lg">
+          <TabList px='100px' borderBottom	={'none'}>
+            <Tab _focus={{ boxShadow: "none"}} _active={{ backgroundColor: "transparent"}}  color="#969696" >登录</Tab>
             <Text display="flex" alignItems="center" mx="20px">
               ·
             </Text>
-            <Tab _focus={{ boxShadow: "none" }}>注册</Tab>
+            <Tab _focus={{ boxShadow: "none"}} _active={{ backgroundColor: "transparent"}}   color="#969696">注册</Tab>
           </TabList>
-          <TabPanels>
+          <TabPanels px="30px">
             <TabPanel>
               <Signin />
             </TabPanel>
