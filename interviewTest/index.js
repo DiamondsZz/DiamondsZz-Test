@@ -97,12 +97,11 @@ let a = {
 
 function change(o) {
   o.age = 24;
-  //关键
+  //关键   变量o改变内存指向 跟a已经没有关系
   o = {
     name: "Kath",
     age: 30,
   };
-
   return o;
 }
 
