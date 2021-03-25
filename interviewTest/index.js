@@ -84,3 +84,30 @@ function greenYellowRed() {
 // },2000);
 
 // console.log("result2", getCount());
+
+/**
+ *
+ * 4.
+ */
+let a = {
+  name: "Julia",
+
+  age: 20,
+};
+
+function change(o) {
+  o.age = 24;
+  //关键
+  o = {
+    name: "Kath",
+    age: 30,
+  };
+
+  return o;
+}
+
+let b = change(a);
+
+console.log(b.age); // 第一个console   30
+
+console.log(a.age); // 第二个console   24
