@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      function getUrlParams(field) {
+        //查询字符串  去掉?
+        const queryStr = window.location.search.slice(1);
+        //查询参数数组
+        const queryArr = queryStr.split("&");
+        for (const query of queryArr) {
+          const key = query.split("=")[0];
+          const value = query.split("=")[1];
+          //匹配到字段
+          if (field === key) return value;
+        }
+      }
+
+      async function skip() {
+        getUrlParams("s");
+        const res = await fetch(``, {});
+        const { status, data } = await res.json();
+        window.location.href = data;
+      }
+
+      skip();
+    </script>
+  </body>
+</html>
