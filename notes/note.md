@@ -29,3 +29,12 @@ console.log(b.age); // 第一个console   30
 
 console.log(a.age); // 第二个console   24
 ```
+
+
+## 拷贝
+
+
+
+
+
+
