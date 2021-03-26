@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      .head {
+        position: relative;
+        height: 60px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-image: url("./img/1.png");
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        color: #fff;
+      }
+      .head img {
+        position: absolute;
+        left: 20px;
+        width: 20px;
+      }
+      .items {
+      }
+      .items .item {
+        position: relative;
+        padding: 20px 0 10px;
+        margin-left: 20px;
+        border-bottom: 1px solid #f5f5f5;
+      }
+      .items .item img {
+        width: 240px;
+        position: absolute;
+        bottom: 0px;
+        right: 0px;
+      }
+      .items .item .item-cell {
+        margin-bottom: 8px;
+      }
+      .items .item .item-cell .item-cell-til {
+        margin-right: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <div class="head">
+        <img src="./img/2.png" alt="" />
+        资产转移记录
+      </div>
+      <div class="items">
+        <div class="item">
+          <div class="item-cell">
+            <span class="item-cell-til">转移单位：</span><span>设计部</span>
+          </div>
+          <div class="item-cell">
+            <span class="item-cell-til">转移时间：</span
+            ><span>----年---月</span>
+          </div>
+          <div class="item-cell">
+            <span class="item-cell-til">是否包含续租：</span><span>是</span>
+          </div>
+          <img src="./img/3.png" alt="" />
+        </div>
+        <!------>
+        <div class="item">
+          <div class="item-cell">
+            <span class="item-cell-til">转移单位：</span><span>设计部</span>
+          </div>
+          <div class="item-cell">
+            <span class="item-cell-til">转移时间：</span
+            ><span>----年---月</span>
+          </div>
+          <div class="item-cell">
+            <span class="item-cell-til">是否包含续租：</span><span>是</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

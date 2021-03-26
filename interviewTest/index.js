@@ -80,7 +80,7 @@ var User = {
 var getCount = User.action.getCount;
 
 setTimeout(() => {
-  console.log("result1", User.action.getCount());
+  // console.log("result1", User.action.getCount());
 }, 2000);
 
 // console.log("result2", getCount());
