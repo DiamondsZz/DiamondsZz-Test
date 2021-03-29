@@ -4,6 +4,7 @@
 function test1() {
   let count = 0;
   for (let i = 0; i <= 100 / 7; i++) {
+    //这里针对j可以优化一波
     for (let j = 0; j <= 100 / 3; j++) {
       if (100 - i * 7 - j * 3 >= 0 && (100 - i * 7 - j * 3) % 2 == 0) {
         count += 1;
@@ -23,7 +24,9 @@ function test1() {
  * 从数组中可以看出，只有 5 出现了 2 次，其余都是 1 次。显然 5 出现的次数最多，则输出 5。
  */
 function test2(arr) {
+  //记录数组元素出现次数  采用map数据结构，查找的时间复杂度是o(1)
   let res = new Map();
+  //出现最多次数
   let max = -1;
   for (let i = 0; i < arr.length; i++) {
     if (res.has(arr[i])) {
@@ -32,6 +35,7 @@ function test2(arr) {
       res.set(arr[i], 1);
     }
   }
+  //获取出现次数的最大值
   max = Math.max.apply(null, [...res.values()]);
   for (let [key, value] of res) {
     if (value === max) console.log(`${key}出现的次数最多，出现了${value}次`);
