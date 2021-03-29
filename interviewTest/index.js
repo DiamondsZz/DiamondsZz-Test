@@ -190,6 +190,6 @@ let cloneObj = deepClone(obj);
 
 cloneObj.arr.push(4);
 
-// console.log("obj", obj);
+console.log("obj", obj);
 
-// console.log("cloneObj", cloneObj);
+console.log("cloneObj", cloneObj);
