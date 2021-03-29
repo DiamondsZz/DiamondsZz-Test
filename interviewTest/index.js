@@ -192,4 +192,106 @@ cloneObj.arr.push(4);
 
 console.log("obj", obj);
 
-console.log("cloneObj", cloneObj);
+// console.log("cloneObj", cloneObj);
+
+/**
+ * 6.1 圆形链继承
+ */
+
+//  function Parent1() {
+
+//   this.name = 'parent1';
+
+//   this.play = [1, 2, 3]
+
+// }
+
+// function Child1() {
+
+//   this.type = 'child2';
+
+// }
+
+// Child1.prototype = new Parent1();
+// let c1=new Child1()
+// let c2=new Child1()
+//console.log(Parent1.prototype);
+//console.log(c1.__proto__===c2.__proto__); //true
+
+/**
+ * 6.2 构造函数继承（借助 call）
+ */
+
+//  function Parent1(){
+
+//   this.name = 'parent1';
+
+// }
+
+// Parent1.prototype.getName = function () {
+
+//   return this.name;
+
+// }
+
+// function Child1(){
+
+//   Parent1.call(this);
+
+//   this.type = 'child1'
+
+// }
+
+// let child = new Child1();
+
+// console.log(child);  // 没问题
+
+// console.log(child.getName());  // 会报错
+
+/**
+ * 6.3 组合继承（前两种组合）
+ */
+
+// function Parent3 () {
+
+//   this.name = 'parent3';
+
+//   this.play = [1, 2, 3];
+
+// }
+
+// Parent3.prototype.getName = function () {
+
+//   return this.name;
+
+// }
+
+// function Child3() {
+
+//   // 第二次调用 Parent3()
+
+//   Parent3.call(this);
+
+//   this.type = 'child3';
+
+// }
+
+// // 第一次调用 Parent3()
+
+// Child3.prototype = new Parent3();
+
+// // 手动挂上构造器，指向自己的构造函数
+// //console.log(Child3.prototype);
+// Child3.prototype.constructor = Child3;
+
+// var s3 = new Child3();
+
+// var s4 = new Child3();
+
+// s3.play.push(4);
+
+// console.log(s3.play, s4.play);  // 不互相影响
+
+// console.log(s3.getName()); // 正常输出'parent3'
+
+// console.log(s4.getName()); // 正常输出'parent3'
