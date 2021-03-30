@@ -70,7 +70,7 @@ function test3(data) {
   const store = [];
 
   for (let type of data) {
-      //匹配到左括号时，进行入栈操作
+    //匹配到左括号时，进行入栈操作
     if (typesLeft.includes(type)) {
       store.push(type);
     } else {
@@ -84,3 +84,66 @@ function test3(data) {
   }
 }
 //test3(['(','{','}','}',')'])
+
+/**
+ * 约瑟夫环是一个数学的应用问题，具体为，已知 n 个人（以编号 1，2，3...n 分别表示）围坐在一张圆桌周围。
+ * 从编号为 k 的人开始报数，数到 m 的那个人出列；
+ * 他的下一个人又从 1 开始报数，数到 m 的那个人又出列；
+ * 依此规律重复下去，直到圆桌周围的人全部出列。
+ * 这个问题的输入变量就是 n 和 m，即 n 个人和数到 m 的出列的人。输出的结果，就是 n 个人出列的顺序。
+ * 这个问题，用队列的方法实现是个不错的选择。它的结果就是出列的顺序，恰好满足队列对处理顺序敏感的前提。因此，求解方式也是基于队列的先进先出原则。
+ * 解法如下：
+ * 先把所有人都放入循环队列中。注意这个循环队列的长度要大于或者等于 n。
+ * 从第一个人开始依次出队列，出队列一次则计数变量 i 自增。如果 i 比 m 小，则还需要再入队列。
+ * 直到i等于 m 的人出队列时，就不用再让这个人进队列了。而是放入一个用来记录出队列顺序的数组中。
+ * 直到数完 n 个人为止。当队列为空时，则表示队列中的 n 个人都出队列了，这时结束队列循环，输出数组内记录的元素。
+ */
+
+//n个人，从编号为k的人开始报数，
+function test4(persons, k, m) {
+  //退出的人
+  const exitPersons = [];
+  //计数器
+  let count = 1;
+
+  //第一次
+  for (let { name, num } of persons) {
+    if (num < k) {
+      persons.shift();
+      persons.push({
+        name,
+        num,
+      });
+      continue;
+    }
+    break;
+  }
+
+  //还有人时
+  while (persons.length) {
+    const person = persons.shift();
+    if (count < m) {
+      persons.push(person);
+      count++;
+    } else {
+      //找到目标后，重置计数器
+      count = 1;
+      exitPersons.push(person);
+    }
+  }
+  //console.log(exitPersons);
+}
+test4(
+  [
+    { name: "赵一", num: 1 },
+    { name: "钱二", num: 2 },
+    { name: "孙三", num: 3 },
+    { name: "李四", num: 4 },
+    { name: "周五", num: 5 },
+    { name: "吴六", num: 6 },
+    { name: "郑七", num: 7 },
+    { name: "王八", num: 8 },
+  ],
+  2,
+  4
+);
