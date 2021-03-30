@@ -133,17 +133,17 @@ function test4(persons, k, m) {
   }
   //console.log(exitPersons);
 }
-test4(
-  [
-    { name: "赵一", num: 1 },
-    { name: "钱二", num: 2 },
-    { name: "孙三", num: 3 },
-    { name: "李四", num: 4 },
-    { name: "周五", num: 5 },
-    { name: "吴六", num: 6 },
-    { name: "郑七", num: 7 },
-    { name: "王八", num: 8 },
-  ],
-  2,
-  4
-);
+// test4(
+//   [
+//     { name: "赵一", num: 1 },
+//     { name: "钱二", num: 2 },
+//     { name: "孙三", num: 3 },
+//     { name: "李四", num: 4 },
+//     { name: "周五", num: 5 },
+//     { name: "吴六", num: 6 },
+//     { name: "郑七", num: 7 },
+//     { name: "王八", num: 8 },
+//   ],
+//   2,
+//   4
+// );
