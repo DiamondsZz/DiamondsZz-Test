@@ -218,3 +218,9 @@ function test8(node) {
  * 给定一个整数数组 arr 和一个目标值 target，请你在该数组中找出加和等于目标值的那两个整数，并返回它们的在数组中下标。
  * 你可以假设，原数组中没有重复元素，而且有且只有一组答案。但是，数组中的元素只能使用一次。例如，arr = [1, 2, 3, 4, 5, 6]，target = 4。因为，arr[0] + arr[2] = 1 + 3 = 4 = target，则输出 0，2。
  */
+function test9(data,target){
+  for(const item of data){
+    if( data.includes(target-item)&&target-item!==item) console.log(`${target}=${item}+${target-item}`);
+  }
+}
+//test9([1,2,3,4,5,6],4)
