@@ -151,15 +151,15 @@ function test4(persons, k, m) {
 /**
  *          10
  *         /  \
- *        8   11
+ *        8   12
  *       / \  / \
- *      6   9 10 12
+ *      6   9 11 13
  * 给定一棵树，按照层次顺序遍历并打印这棵树。
  */
 const root = {
   value: 10,
   left: { value: 8, left: { value: 6 }, right: { value: 9 } },
-  right: { value: 11, left: { value: 10 }, right: { value: 12 } },
+  right: { value: 12, left: { value: 11 }, right: { value: 13 } },
 };
 function test5(root) {
   //模拟队列
@@ -185,18 +185,35 @@ function test5(root) {
 /**
  *          10
  *         /  \
- *        8   11
+ *        8   12
  *       / \  / \
- *      6   9 10 12
+ *      6   9 11 13
  * 二叉树的三种遍历方式
  */
 //前序
-function test6(root) {}
+function test6(node) {
+   if(!node) return
+   console.log(node.value);
+   test6(node.left)
+   test6(node.right)
+}
+//test6(root)
 //中序
-function test7(root) {}
+function test7(node) {
+  if(!node) return
+   test7(node.left)
+   console.log(node.value);
+   test7(node.right)
+}
+//test7(root)
 //后序
-function test8(root) {}
-
+function test8(node) {
+  if(!node) return
+   test8(node.left)
+   test8(node.right)
+   console.log(node.value);
+}
+//test8(root)
 /**
  * 给定一个整数数组 arr 和一个目标值 target，请你在该数组中找出加和等于目标值的那两个整数，并返回它们的在数组中下标。
  * 你可以假设，原数组中没有重复元素，而且有且只有一组答案。但是，数组中的元素只能使用一次。例如，arr = [1, 2, 3, 4, 5, 6]，target = 4。因为，arr[0] + arr[2] = 1 + 3 = 4 = target，则输出 0，2。
