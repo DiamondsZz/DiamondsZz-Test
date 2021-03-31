@@ -148,17 +148,44 @@ function test4(persons, k, m) {
 //   4
 // );
 
-
 /**
- * 
+ *          10
+ *         /  \
+ *        8   11
+ *       / \  / \
+ *      6   9 10 12
+ *
+ 
  * 给定一棵树，按照层次顺序遍历并打印这棵树。
  */
-
+const root = {
+  value: 10,
+  left: { value: 8, left: { value: 6 }, right: { value: 9 } },
+  right: { value: 11, left: { value: 10 }, right: { value: 12 } },
+};
+function test5(root) {
+  //模拟队列
+  const queue = [];
+  //根节点入队列
+  queue.push(root);
+  while (queue.length) {
+    const current = queue.shift();
+    console.log(current.value);
+    //左节点
+    if (current.left) {
+      queue.push(current.left);
+    }
+    //右节点
+    if (current.right) {
+      queue.push(current.right);
+    }
+  }
+}
+//test5(root);
 
 /**
  * 二叉树的三种遍历方式
  */
-
 
 /**
  * 给定一个整数数组 arr 和一个目标值 target，请你在该数组中找出加和等于目标值的那两个整数，并返回它们的在数组中下标。
