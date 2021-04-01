@@ -1,5 +1,5 @@
 /**
- *1.假设有任意多张面额为 2 元、3 元、7 元的货币，现要用它们凑出 100 元，求总共有多少种可能性。
+ *假设有任意多张面额为 2 元、3 元、7 元的货币，现要用它们凑出 100 元，求总共有多少种可能性。
  */
 function test1() {
   let count = 0;
@@ -192,35 +192,64 @@ function test5(root) {
  */
 //前序
 function test6(node) {
-   if(!node) return
-   console.log(node.value);
-   test6(node.left)
-   test6(node.right)
+  if (!node) return;
+  console.log(node.value);
+  test6(node.left);
+  test6(node.right);
 }
 //test6(root)
 //中序
 function test7(node) {
-  if(!node) return
-   test7(node.left)
-   console.log(node.value);
-   test7(node.right)
+  if (!node) return;
+  test7(node.left);
+  console.log(node.value);
+  test7(node.right);
 }
 //test7(root)
 //后序
 function test8(node) {
-  if(!node) return
-   test8(node.left)
-   test8(node.right)
-   console.log(node.value);
+  if (!node) return;
+  test8(node.left);
+  test8(node.right);
+  console.log(node.value);
 }
 //test8(root)
 /**
  * 给定一个整数数组 arr 和一个目标值 target，请你在该数组中找出加和等于目标值的那两个整数，并返回它们的在数组中下标。
  * 你可以假设，原数组中没有重复元素，而且有且只有一组答案。但是，数组中的元素只能使用一次。例如，arr = [1, 2, 3, 4, 5, 6]，target = 4。因为，arr[0] + arr[2] = 1 + 3 = 4 = target，则输出 0，2。
  */
-function test9(data,target){
-  for(const item of data){
-    if( data.includes(target-item)&&target-item!==item) console.log(`${target}=${item}+${target-item}`);
+function test9(data, target) {
+  for (const item of data) {
+    if (data.includes(target - item) && target - item !== item)
+      console.log(`${target}=${item}+${target - item}`);
   }
 }
 //test9([1,2,3,4,5,6],4)
+
+/**
+ * 汉诺塔问题
+ * 从左到右有 x、y、z 三根柱子，其中 x 柱子上面有从小叠到大的 n 个圆盘。现要求将 x 柱子上的圆盘移到 z 柱子上去。要求是，每次只能移动一个盘子，且大盘子不能被放在小盘子上面。求移动的步骤。
+ * ---------------------------------------------
+ * 我们的原问题是，把从小到大的 n 个盘子，从 x 移动到 z。
+ * 我们可以将这个大问题拆解为以下 3 个小问题：
+ * 把从小到大的 n-1 个盘子，从 x 移动到 y；
+ * 接着把最大的一个盘子，从 x 移动到 z；
+ * 再把从小到大的 n-1 个盘子，从 y 移动到 z。
+ * --------------------------------------
+ * 经过仔细分析可见，汉诺塔问题是完全可以用递归实现的。我们定义汉诺塔的递归函数为 hanio()。这个函数的输入参数包括了：
+ * 3 根柱子的标记 x、y、z；
+ * 待移动的盘子数量 n。
+ * -----------------------------------
+ * 具体代码如下所示，在代码中，hanio(n, x, y, z)，代表了把 n 个盘子由 x 移动到 z。根据分析，我们知道递归体包含 3 个步骤：
+ * 把从小到大的 n-1 个盘子从 x 移动到 y，那么代码就是 hanio(n-1, x, z, y)；
+ * 再把最大的一个盘子从 x 移动到 z，那么直接完成一次移动的动作就可以了；
+ * 再把从小到大的 n-1 个盘子从 y 移动到 z，那么代码就是 hanio(n-1, y, x, z)。对于终止条件则需要判断 n 的大小。如果 n 等于 1，那么同样直接移动就可以了。
+ */
+function test10(n, x, y, z) {
+  if (n < 1) return console.log("汉诺塔层数不能小于1");
+  if (n === 1) return console.log(`移动${x}到${z}`);
+  test10(n - 1, x, z, y);
+  console.log(`移动${x}到${z}`);
+  test10(n - 1, y, x, z);
+}
+//test10(3, "x", "y", "z");
