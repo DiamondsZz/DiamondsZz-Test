@@ -275,8 +275,59 @@ function test11(data, x) {
   if (x === target) console.log(data[x]);
   return data[x];
 }
-test11(data, target);
+//test11(data, target);
 
 /**
- *
+ *二分 (基于有序)
  */
+function test12(data, target) {
+  //低
+  let low = 0;
+  //高
+  let high = data.length - 1;
+  //中
+  let middle = 0;
+  //计数器
+  let count = 1;
+  while (low <= high) {
+    middle = Math.floor((low + high) / 2);
+    if (target === data[middle]) {
+      console.log(`找了${count}次`);
+      return;
+    }
+    if (target > data[middle]) {
+      low = middle + 1;
+    }
+    if (target < data[middle]) {
+      high = middle - 1;
+    }
+    count++;
+  }
+  console.log("没有找到");
+}
+//test12([2, 4, 6, 7], 4);
+/**
+ *在一个有序数组中，查找出第一个大于 9 的数字，假设一定存在。
+ *例如，arr = { -1, 3, 3, 7, 10, 14, 14 }; 则返回 10。
+ *查找的目标数字具备这样的性质：
+ *第一，它比 9 大；
+ *第二，它前面的数字（除非它是第一个数字），比 9 小。
+ *因此，当我们作出向左走或向右走的决策时，必须满足这两个条件。
+ */
+function test13(data, target) {
+  let low = 0;
+  let high = data.length - 1;
+  let middle = 0;
+  while (low <= high) {
+    middle = Math.floor((low + high) / 2);
+    if (target >= data[middle]) {
+      if (target < data[middle + 1]) return data[middle + 1];
+      low = middle + 1;
+    }
+    if (target < data[middle]) {
+      if (target > data[middle - 1]) return data[middle];
+      high = middle - 1;
+    }
+  }
+}
+//console.log(test13([-1, 3, 3, 7, 10, 14, 14], 9));
