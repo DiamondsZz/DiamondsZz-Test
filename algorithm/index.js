@@ -359,6 +359,7 @@ function test15(data) {
   for (let i = 1; i < data.length; i++) {
     //记录当前遍历的元素
     let current = data[i];
+    //冒泡
     for (let j = i - 1; j >= 0; j--) {
       if (data[j] > current) {
         data[j + 1] = data[j] + data[j + 1];
