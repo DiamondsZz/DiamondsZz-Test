@@ -331,3 +331,20 @@ function test13(data, target) {
   }
 }
 //console.log(test13([-1, 3, 3, 7, 10, 14, 14], 9));
+/**
+ * 冒泡排序
+ */
+
+function test14(data) {
+  for (let i = 0; i < data.length; i++) {
+    for (let j = 0; j < data.length - i; j++) {
+      if (data[j] > data[j + 1]) {
+        data[j + 1] = data[j] + data[j + 1];
+        data[j] = data[j + 1] - data[j];
+        data[j + 1] = data[j + 1] - data[j];
+      }
+    }
+  }
+  console.log(data);
+}
+//test14([-1, 3, -3, 7, 10, 14, 14]);
