@@ -337,7 +337,9 @@ function test13(data, target) {
 
 function test14(data) {
   for (let i = 0; i < data.length; i++) {
+    //j < data.length - i 每一轮都会筛选出一个最值
     for (let j = 0; j < data.length - i; j++) {
+      //交换位置
       if (data[j] > data[j + 1]) {
         data[j + 1] = data[j] + data[j + 1];
         data[j] = data[j + 1] - data[j];
