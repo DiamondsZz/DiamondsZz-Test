@@ -352,7 +352,26 @@ function test14(data) {
 //test14([-1, 3, -3, 7, 10, 14, 14]);
 /**
  * 插入排序
+ * 选取未排序的元素，插入到已排序区间的合适位置，直到未排序区间为空。
+ * 插入排序顾名思义，就是从左到右维护一个已经排好序的序列。直到所有的待排数据全都完成插入的动作。
  */
+function test15(data) {
+  for (let i = 1; i < data.length; i++) {
+    //记录当前遍历的元素
+    let current = data[i];
+    for (let j = i - 1; j >= 0; j--) {
+      if (data[j] > current) {
+        data[j + 1] = data[j] + data[j + 1];
+        data[j] = data[j + 1] - data[j];
+        data[j + 1] = data[j + 1] - data[j];
+      } else {
+        break;
+      }
+    }
+  }
+  console.log(data);
+}
+test15([-1, 3, -3, 7, 10, 14, 14]);
 /**
  * 归并排序
  */
