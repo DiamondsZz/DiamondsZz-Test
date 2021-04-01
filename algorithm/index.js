@@ -265,4 +265,14 @@ function test10(n, x, y, z) {
  * 例如，输入 4，输出 2；输入 9，输出 21。
  * 要求：需要用递归的方式来实现。
  */
-function test11() {}
+const target = 9;
+const data = [0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144];
+function test11(data, x) {
+  if (x === 1) return 0;
+  if (x === 2) return 1;
+  if (x > 2) data[x] = test11(data, x - 1) + test11(data, x - 2);
+  //输出结果
+  if (x === target) console.log(data[x]);
+  return data[x];
+}
+test11(data, target);
