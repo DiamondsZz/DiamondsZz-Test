@@ -359,7 +359,6 @@ function test15(data) {
   for (let i = 1; i < data.length; i++) {
     //记录当前遍历的元素
     let current = data[i];
-    //冒泡
     for (let j = i - 1; j >= 0; j--) {
       if (data[j] > current) {
         data[j + 1] = data[j] + data[j + 1];
@@ -373,6 +372,22 @@ function test15(data) {
   console.log(data);
 }
 test15([-1, 3, -3, 7, 10, 14, 14]);
+function test16(data) {
+  for (let i = 1; i < data.length; i++) {
+    //记录当前遍历的元素
+    let current = data[i];
+    let j = i - 1;
+    for (; j >= 0; j--) {
+      if (data[j] > current) {
+        data[j + 1] = data[j];
+      } else {
+        break;
+      }
+    }
+    data[j + 1] = current;
+  }
+}
+test16([-1, 3, -3, 7, 10, 14, 14]);
 /**
  * 归并排序
  */
