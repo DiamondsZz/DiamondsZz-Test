@@ -453,7 +453,52 @@ function test17(data) {
   split(data, temp, start, end);
   console.log(data);
 }
-test17([-1, -3, -3, 7, 10, 14, 14]);
+//test17([-1, -3, -3, 7, 10, 14, 14]);
 /**
  * 快速排序
+ * 快速排序法的原理也是分治法。
+ * 它的每轮迭代，会选取数组中任意一个数据作为分区点，将小于它的元素放在它的左侧，大于它的放在它的右侧。
+ * 再利用分治思想，继续分别对左右两侧进行同样的操作，直至每个区间缩小为 1，则完成排序。
  */
+
+function test18(data, start, end) {
+  if (start >= end) return;
+
+  //取数据第一个值作为参考值
+  let temp = data[start];
+  //左指针
+  let left = start;
+  //右指针
+  let right = end;
+  while (left < right) {
+    //从右
+    while (temp <= data[right] && left < right) {
+      right--;
+    }
+    //从左
+    while (temp >= data[left] && left < right) {
+      left++;
+    }
+    //此时的left和right位置元素交换位置
+    /**
+     * 1.可以使用变量交换两个元素
+     * 2.这里的交换方法针对left和right相同情况时做了一层判断
+     */
+    if (left !== right) {
+      data[right] = data[left] + data[right];
+      data[left] = data[right] - data[left];
+      data[right] = data[right] - data[left];
+    }
+  }
+  //参考值与此时的结束位置元素交换位置  (判断情况与上面类似)
+  if (start !== left) {
+    data[start] = data[left] + data[start];
+    data[left] = data[start] - data[left];
+    data[start] = data[start] - data[left];
+  }
+
+  test18(data, start, left - 1);
+  test18(data, left + 1, end);
+  console.log(data);
+}
+//test18([-1, -3, -3, 7, 10, 14, 14], 0, 6);
