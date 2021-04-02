@@ -507,6 +507,35 @@ function test18(data, start, end) {
  * 比如，输入 a = "13452439"， b = "123456"。由于字符串 "345" 同时在 a 和 b 中出现，且是同时出现在 a 和 b 中的最长子串。因此输出 "345"。
  */
 
+function test19(strA, strB) {
+  let indexB = -1;
+  let indexA = -1;
+  let map = new Map();
+  for (let i = 0; i < strA.length; i++) {
+    indexA = i;
+    indexB = strB.indexOf(strA[i]);
+    //strA[i]是否存在strB中
+    if (indexB !== -1) {
+      let str = strA[i];
+      map.set(str, str.length);
+      for (let j = indexB + 1; j < strB.length; j++) {
+        if (strA[++indexA] === strB[j]) {
+          str += strB[j];
+          map.set(str, str.length);
+        } else {
+          break;
+        }
+      }
+    }
+  }
+  console.log(map);
+  for (const [key, value] of map) {
+    if (value === Math.max.apply(null, [...map.values()])) {
+      console.log(`最大公共字符串为：${key}`);
+    }
+  }
+}
+//test19("13145612439", "1234562");
 /**
  *  两个有序数组查找合并之后的中位数。给定两个大小为 m 和 n 的正序（从小到大）数组 nums1 和 nums2。请你找出这两个正序数组合在一起之后的中位数，并且要求算法的时间复杂度为 O(log(m + n))。
  * 你可以假设 nums1 和 nums2 不会同时为空，所有的数字全都不相等。还可以再假设，如果数字个数为偶数个，中位数就是中间偏左的那个元素。
