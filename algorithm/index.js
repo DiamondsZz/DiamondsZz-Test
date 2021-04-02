@@ -508,7 +508,9 @@ function test18(data, start, end) {
  */
 
 function test19(strA, strB) {
+  //记录字符串a的下标
   let indexB = -1;
+  //记录字符串b的下标
   let indexA = -1;
   let map = new Map();
   for (let i = 0; i < strA.length; i++) {
@@ -528,7 +530,6 @@ function test19(strA, strB) {
       }
     }
   }
-  console.log(map);
   for (const [key, value] of map) {
     if (value === Math.max.apply(null, [...map.values()])) {
       console.log(`最大公共字符串为：${key}`);
