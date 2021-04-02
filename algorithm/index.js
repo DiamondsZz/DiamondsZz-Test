@@ -369,9 +369,8 @@ function test15(data) {
       }
     }
   }
-  console.log(data);
 }
-test15([-1, 3, -3, 7, 10, 14, 14]);
+//test15([-1, 3, -3, 7, 10, 14, 14]);
 function test16(data) {
   for (let i = 1; i < data.length; i++) {
     //记录当前遍历的元素
@@ -387,10 +386,74 @@ function test16(data) {
     data[j + 1] = current;
   }
 }
-test16([-1, 3, -3, 7, 10, 14, 14]);
+//test16([-1, 3, -3, 7, 10, 14, 14]);
 /**
  * 归并排序
+ * 归并排序的原理就是分治法。
+ * 它首先将数组不断地二分，直到最后每个部分只包含 1 个数据。
+ * 然后再对每个部分分别进行排序，最后将排序好的相邻的两部分合并在一起，这样整个数组就有序了。
  */
+
+function test17(data) {
+  //临时数组
+  let temp = [];
+  //开始下标
+  let start = 0;
+  //结束下标
+  let end = data.length - 1;
+
+  //拆分
+  function split(data, temp, start, end) {
+    if (start < end) {
+      //中间下标
+      let mid = Math.floor((start + end) / 2);
+
+      //对左边进行拆分
+      split(data, temp, start, mid);
+      //对右边进行拆分
+      split(data, temp, mid + 1, end);
+      //合并左右部分
+      merge(data, temp, start, mid, end);
+    }
+  }
+
+  //合并
+  function merge(data, temp, start, mid, end) {
+    //左边开始下标
+    let leftStart = start;
+    //右边开始下标
+    let rightStart = mid + 1;
+    //临时数组开始下标
+    let left = start;
+
+    //左边部分和右边部分都未走完时
+    while (leftStart <= mid && rightStart <= end) {
+      if (data[leftStart] > data[rightStart]) {
+        temp[left++] = data[rightStart++];
+      } else {
+        temp[left++] = data[leftStart++];
+      }
+    }
+
+    //左边部分未走完时
+    while (leftStart <= mid) {
+      temp[left++] = data[leftStart++];
+    }
+    //右边部分未走完时
+    while (rightStart <= end) {
+      temp[left++] = data[rightStart++];
+    }
+
+    //每次合并完更新原数据
+    for (let i = 0; i < temp.length; i++) {
+      data[i] = temp[i];
+    }
+  }
+
+  split(data, temp, start, end);
+  console.log(data);
+}
+test17([-1, -3, -3, 7, 10, 14, 14]);
 /**
  * 快速排序
  */
