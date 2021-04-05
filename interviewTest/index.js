@@ -392,3 +392,27 @@ Function.prototype.bind = function (context, ...args) {
   return fbound;
 };
 //new (Math.max.bind(this))();
+/**
+ * 闭包
+ */
+// var a22 = 2;
+
+// (function IIFE(){
+//   a22=33
+//   console.log(a22);  // 输出2
+
+// })();
+// for(var i = 1;i <= 5;i++){
+
+//   (function(j){
+
+//     setTimeout(function timer(){
+
+//       console.log(j)
+
+//     }, 0)
+
+//   })(i)
+
+// }
+
