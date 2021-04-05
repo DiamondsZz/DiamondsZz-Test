@@ -470,7 +470,7 @@ var foo = {
 
 var jsonString = JSON.stringify(foo, replacer);
 
-console.log(jsonString);
+//console.log(jsonString);
 
 // "{"week":4,"month":7}"
 
@@ -564,3 +564,5 @@ function jsonStringify(data) {
     }
   }
 }
+
+//console.log(JSON.stringify([2,5,'ggg']));
