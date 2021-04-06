@@ -544,7 +544,23 @@ function test19(strA, strB) {
  * nums2 = [2, 4, 8, 12]
  * 输出 5。
  */
+function test20(arr1, arr2) {
+  const arr = [];
+  let i = 0,
+    j = 0,
+    k = 0;
 
+  while (i < arr1.length || j < arr2.length) {
+    if (arr1[i] < arr2[j]) {
+      arr[k++] = arr1[i++];
+    } else {
+      arr[k++] = arr2[j++];
+    }
+  }
+  console.log(arr);
+  console.log(arr[Math.floor(arr.length / 2)]);
+}
+//test20([1, 2, 3, 5, 7, 9, 11], [1, 2, 4, 4, 8, 12]);
 /**
  * 小明从小就喜欢数学，喜欢在笔记里记录很多表达式。他觉得现在的表达式写法很麻烦，为了提高运算符优先级，不得不添加很多括号。如果不小心漏了一个右括号的话，就差之毫厘，谬之千里了。
  * 因此他改用前缀表达式，例如把 (2 + 3) * 4写成* + 2 3 4，这样就能避免使用括号了。这样的表达式虽然书写简单，但计算却不够直观。请你写一个程序帮他计算这些前缀表达式。
