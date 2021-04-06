@@ -561,3 +561,24 @@ function test20(arr1, arr2) {
   console.log(arr[Math.floor(arr.length / 2)]);
 }
 //test20([1, 2, 3, 5, 7, 9, 11], [1, 2, 4, 4, 8, 12]);
+/**
+ * 回文
+ * 回文数是指正序（从左向右）和倒序（从右向左）读都是一样的整数。例如，121 是回文，而 123 不是。
+ */
+function test21(str) {
+  let left = "",
+    right = "",
+    leftEnd = str.length / 2,
+    rightStart = str.length / 2;
+  //长度为奇数
+  if (str.length % 2 !== 0) {
+    leftEnd = Math.floor(str.length / 2);
+    rightStart = Math.floor(str.length / 2) + 1;
+  }
+  left = str.slice(0, leftEnd);
+  //翻转右半部分
+  right = str.slice(rightStart).split("").reverse().join("");
+  if (left === right) console.log("是");
+  else console.log("否");
+}
+test21("1221");
