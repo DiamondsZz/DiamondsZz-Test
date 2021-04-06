@@ -528,52 +528,6 @@ console.log('cloneObj', cloneObj)
 3. 如果是在浏览器端，那么基本要渲染页面了；
 4. 开始下一轮的循环（tick），执行宏任务中的一些异步代码，例如 setTimeout 等。
 * Call-Stack（调用栈）也就是执行栈，它是一个栈的结构，符合先进后出的机制，每次一个循环，先执行最先入队的宏任务，然后再执行微任务。不管微任务还是宏任务，它们只要按照顺序进入了执行栈，那么执行栈就还是按照先进后出的规则，一步一步执行。因此根据这个原则，最先进行调用栈的宏任务，一般情况下都是最后返回执行的结果。
-#### 宏任务
-* 如果在浏览器的环境下，宏任务主要分为下面这几个大类：
-1. 渲染事件（比如解析 DOM、计算布局、绘制）；
-2. 用户交互事件（比如鼠标点击、滚动页面、放大缩小等）；
-3. setTimeout、setInterval 等；
-4. 网络请求完成、文件读写完成事件。
-* 为了让这些任务在主线程上执行，页面进程引入了消息队列和事件循环机制，我们把这些消息队列中的任务称为宏任务。
-* 宏任务基本上满足了日常的开发需求，而对于时间精度有要求的宏任务就不太能满足了，比如渲染事件、各种 I/O、用户交互的事件等，都随时有可能被添加到消息队列中，JS 代码不能准确掌控任务要添加到队列中的位置，控制不了任务在消息队列中的位置，所以很难控制开始执行任务的时间。
-```
-function callback2(){
-
-    console.log(2)
-
-}
-
-function callback(){
-
-    console.log(1)
-
-    setTimeout(callback2,0)
-
-}
-
-setTimeout(callback,0)
-在上面这段代码中，我的目的是想通过 setTimeout 来设置两个回调任务，并让它们按照前后顺序来执行，中间也不要再插入其他的任务。
-但是实际情况我们难以控制，比如在你调用 setTimeout 来设置回调任务的间隙，消息队列中就有可能被插入很多系统级的任务。
-如果中间被插入的任务执行时间过久的话，那么就会影响到后面任务的执行了。所以说宏任务的时间粒度比较大，执行的间隔是不能精确控制的。
-这就不适用于一些高实时性的需求了，比如后面要讲到的监听 DOM 变化。
-```
-#### 微任务
-* 微任务就是一个需要异步执行的函数，执行时机是在主函数执行结束之后、当前宏任务结束之前。
-* 当 JavaScript 执行一段脚本的时候，V8 会为其创建一个全局执行上下文，同时 V8 引擎也会在内部创建一个微任务队列。这个微任务队列就是用来存放微任务的，因为在当前宏任务执行的过程中，有时候会产生多个微任务，这时候就需要使用这个微任务队列来保存这些微任务了。不过这个微任务队列是给 V8 引擎内部使用的，所以你是无法通过 JavaScript 直接访问的。
-* 在现代浏览器里面，产生微任务有两种方式
-1. 使用 MutationObserver 监控某个 DOM 节点，或者为这个节点添加、删除部分子节点，当 DOM 节点发生变化时，就会产生 DOM 变化记录的微任务。
-2. 使用 Promise，当调用 Promise.resolve() 或者 Promise.reject() 的时候，也会产生微任务
-* 如果在执行微任务的过程中，产生了新的微任务，一样会将该微任务添加到微任务队列中，V8 引擎一直循环执行微任务队列中的任务，直到队列清空才算执行结束。也就是说在执行微任务过程中产生的新的微任务并不会推迟到下一个循环中执行，而是在当前的循环中继续执行，这点是需要注意的。
-* 微任务和宏任务是绑定的，每个宏任务在执行时，会创建自己的微任务队列。
-* 微任务的执行时长会影响当前宏任务的时长。比如一个宏任务在执行过程中，产生了 10 个微任务，执行每个微任务的时间是 10ms，那么执行这 10 个微任务的时间就是 100ms，也可以说这 10 个微任务让宏任务的执行时间延长了 100ms。
-* 在一个宏任务中，分别创建一个用于回调的宏任务和微任务，无论什么情况下，微任务都早于宏任务执行。
-
-### MutationObserver
-
-* MutationObserver API 可以用来监视 DOM 的变化，包括属性的变更、节点的增加、内容的改变等。因为上面我们分析过，在两个任务之间，可能会被渲染进程插入其他的事件，从而影响到响应的实时性。这时候，微任务就可以上场了，在每次 DOM 节点发生变化的时候，渲染引擎将变化记录封装成微任务，并将微任务添加进当前的微任务队列中。这样当执行到检查点的时候，V8 引擎就会按照顺序执行微任务了。
-* MutationObserver 采用了“异步 + 微任务”的策略：
-1. 通过异步操作解决了同步操作的性能问题；
-2. 通过微任务解决了实时性的问题。
 
 ```
 async function async1() {
@@ -626,6 +580,240 @@ async1 end
 promise2
 timeout
 
+
+```
+
+
+#### 宏任务
+* 如果在浏览器的环境下，宏任务主要分为下面这几个大类：
+1. 渲染事件（比如解析 DOM、计算布局、绘制）；
+2. 用户交互事件（比如鼠标点击、滚动页面、放大缩小等）；
+3. setTimeout、setInterval 等；
+4. 网络请求完成、文件读写完成事件。
+* 为了让这些任务在主线程上执行，页面进程引入了消息队列和事件循环机制，我们把这些消息队列中的任务称为宏任务。
+* 宏任务基本上满足了日常的开发需求，而对于时间精度有要求的宏任务就不太能满足了，比如渲染事件、各种 I/O、用户交互的事件等，都随时有可能被添加到消息队列中，JS 代码不能准确掌控任务要添加到队列中的位置，控制不了任务在消息队列中的位置，所以很难控制开始执行任务的时间。
+```
+function callback2(){
+
+    console.log(2)
+
+}
+
+function callback(){
+
+    console.log(1)
+
+    setTimeout(callback2,0)
+
+}
+
+setTimeout(callback,0)
+在上面这段代码中，我的目的是想通过 setTimeout 来设置两个回调任务，并让它们按照前后顺序来执行，中间也不要再插入其他的任务。
+但是实际情况我们难以控制，比如在你调用 setTimeout 来设置回调任务的间隙，消息队列中就有可能被插入很多系统级的任务。
+如果中间被插入的任务执行时间过久的话，那么就会影响到后面任务的执行了。所以说宏任务的时间粒度比较大，执行的间隔是不能精确控制的。
+这就不适用于一些高实时性的需求了，比如后面要讲到的监听 DOM 变化。
+```
+#### 微任务
+* 微任务就是一个需要异步执行的函数，执行时机是在主函数执行结束之后、当前宏任务结束之前。
+* 当 JavaScript 执行一段脚本的时候，V8 会为其创建一个全局执行上下文，同时 V8 引擎也会在内部创建一个微任务队列。这个微任务队列就是用来存放微任务的，因为在当前宏任务执行的过程中，有时候会产生多个微任务，这时候就需要使用这个微任务队列来保存这些微任务了。不过这个微任务队列是给 V8 引擎内部使用的，所以你是无法通过 JavaScript 直接访问的。
+* 在现代浏览器里面，产生微任务有两种方式
+1. 使用 MutationObserver 监控某个 DOM 节点，或者为这个节点添加、删除部分子节点，当 DOM 节点发生变化时，就会产生 DOM 变化记录的微任务。
+2. 使用 Promise，当调用 Promise.resolve() 或者 Promise.reject() 的时候，也会产生微任务
+* 如果在执行微任务的过程中，产生了新的微任务，一样会将该微任务添加到微任务队列中，V8 引擎一直循环执行微任务队列中的任务，直到队列清空才算执行结束。也就是说在执行微任务过程中产生的新的微任务并不会推迟到下一个循环中执行，而是在当前的循环中继续执行，这点是需要注意的。
+* 微任务和宏任务是绑定的，每个宏任务在执行时，会创建自己的微任务队列。
+* 微任务的执行时长会影响当前宏任务的时长。比如一个宏任务在执行过程中，产生了 10 个微任务，执行每个微任务的时间是 10ms，那么执行这 10 个微任务的时间就是 100ms，也可以说这 10 个微任务让宏任务的执行时间延长了 100ms。
+* 在一个宏任务中，分别创建一个用于回调的宏任务和微任务，无论什么情况下，微任务都早于宏任务执行。
+
+#### MutationObserver
+
+* MutationObserver API 可以用来监视 DOM 的变化，包括属性的变更、节点的增加、内容的改变等。因为上面我们分析过，在两个任务之间，可能会被渲染进程插入其他的事件，从而影响到响应的实时性。这时候，微任务就可以上场了，在每次 DOM 节点发生变化的时候，渲染引擎将变化记录封装成微任务，并将微任务添加进当前的微任务队列中。这样当执行到检查点的时候，V8 引擎就会按照顺序执行微任务了。
+* MutationObserver 采用了“异步 + 微任务”的策略：
+1. 通过异步操作解决了同步操作的性能问题；
+2. 通过微任务解决了实时性的问题。
+
+#### Process.nextTick
+
+* Process.nextick 的运行逻辑：
+1. Process.nextick 会将 callback 添加到“next tick queue”；
+2. “next tick queue”会在当前 JavaScript stack 执行完成后，下一次 event loop 开始执行前按照 FIFO 出队；
+3. 如果递归调用 Process.nextick 可能会导致一个无限循环，需要去适时终止递归。
+* 可能你已经注意到 Process.nextick 其实是微任务，同时也是异步 API 的一部分。但是从技术上来说 Process.nextick 并不是事件循环（eventloop）的一部分，相反地，“next tick queue”将会在当前操作完成之后立即被处理，而不管当前处于事件循环的哪个阶段。
+* 如果任何时刻你在一个给定的阶段调用 Process.nextick，则所有被传入 Process.nextick 的回调将在事件循环继续往下执行前被执行。这可能会导致一些很糟的情形，因为它允许用户递归调用 Process.nextick 来挂起 I/O 进程的进行，这会导致事件循环永远无法到达轮询阶段。
+```
+let bar;
+
+function someAsyncApiCall(callback) { callback(); }
+
+someAsyncApiCall(() => {
+
+  console.log('bar', bar);   // undefined
+
+});
+
+bar = 1;
+
+用户定义函数 someAsyncApiCall() 有一个异步签名，但实际上它是同步执行的。
+当它被调用时，提供给 someAsyncApiCall() 的回调函数会在执行 someAsyncApiCall() 本身的同一个事件循环阶段被执行，因为 someAsyncApiCall() 实际上并未执行任何异步操作。
+结果就是，即使回调函数尝试引用变量 bar，但此时在作用域中并没有改变量。因为程序还没运行到对 bar 赋值的部分。
+
+将回调放到 Process.nextick 中，程序依然可以执行完毕，且所有的变量、函数等都在执行回调之前被初始化，它还具有不会被事件循环打断的优点。以下是将上面的例子改用 Process.nextick 的代码：
+
+let bar;
+
+ 
+
+function someAsyncApiCall(callback) {
+
+  process.nextTick(callback);
+
+}
+
+ 
+
+someAsyncApiCall(() => {
+
+  console.log('bar', bar); // 1
+
+});
+
+ 
+
+bar = 1;
+
+-------------------------------------------------
+
+
+
+const EventEmitter = require('events');
+
+const util = require('util');
+
+ 
+
+function MyEmitter() {
+
+EventEmitter.call(this);
+
+this.emit('event');
+
+}
+
+util.inherits(MyEmitter, EventEmitter);
+
+ 
+
+const myEmitter = new MyEmitter();
+
+myEmitter.on('event', () => {
+
+console.log('an event occurred!');
+
+});
+
+
+你无法在构造函数中立即触发一个事件，因为此时程序还未运行到将回调赋值给事件的那段代码。
+
+
+因此，在构造函数内部，你可以使用 Process.nextick 设置一个回调以在构造函数执行完毕后触发事件，下面的代码满足了我们的预期。
+
+const EventEmitter = require('events');
+
+const util = require('util');
+
+ 
+
+function MyEmitter() {
+
+EventEmitter.call(this);
+
+process.nextTick(() => {
+
+  this.emit('event');
+
+});
+
+}
+
+util.inherits(MyEmitter, EventEmitter);
+
+ 
+
+const myEmitter = new MyEmitter();
+
+  myEmitter.on('event', () => {
+
+  console.log('an event occurred!');
+
+});
+
+
+通过上面的改造可以看出，使用 Process.nextick 就可以解决问题了，即使 event 事件还没进行绑定，但也可以让代码在前面进行触发，因为根据代码执行顺序，Process.nextick 是在每一次的事件循环最后执行的。
+因此这样写，代码也不会报错，同样又保持了代码的逻辑。
+
+
+
+```
+#### Vue的nextick
+```
+<template>
+
+  <div class="app">
+
+    <div ref="msg">{{msg}}</div>
+
+    <div v-if="msg1">Message got outside $nextTick: {{msg1}}</div>
+
+    <div v-if="msg2">Message got inside $nextTick: {{msg2}}</div>
+
+    <button @click="changeMsg">
+
+      Change the Message
+
+    </button>
+
+  </div>
+
+</template>
+
+<script>
+
+new Vue({
+
+  el: '.app',
+
+  data: {
+
+    msg: 'Vue',
+
+    msg1: '',
+
+    msg2: '',
+
+  },
+
+  methods: {
+
+    changeMsg() {
+
+      this.msg = "Hello world."
+
+      this.msg1 = this.$refs.msg.innerHTML
+
+      this.$nextTick(() => {
+
+        this.msg2 = this.$refs.msg.innerHTML
+
+      })
+
+    }
+
+  }
+
+})
+
+</script>
+
+通过按钮点击之后，div 里面的 msg1 和 msg2 的变化情况。你会发现第一次点击按钮调用 changeMsg 方法时，其实 msg2 并没有变化，因为 msg2 的变化是在下一个 tick 才进行执行的。
 
 ```
 
