@@ -598,3 +598,132 @@ function jsonStringify(data) {
 // });
 
 // console.log("script end");
+
+const readFilePromise = (filename) => {
+  return new Promise((resolve, reject) => {
+    resolve(223);
+  }).then((res) => res);
+};
+
+// const gen = function* () {
+//   yield readFilePromise();
+//   yield 252;
+//   return 2282;
+// };
+
+// console.log(
+//   gen()
+//     .next()
+//     .value.then((res) => console.log(res))
+// );
+// let g = gen();
+
+// g.next().value.then((res) => console.log(g.next()));
+// console.log(g.next());
+function* gen() {
+  console.log("enter");
+
+  let a = yield 1;
+
+  let b = yield (function () {
+    return 2;
+  })();
+
+  return 3;
+}
+
+var g = gen(); // 阻塞住，不会执行任何语句
+
+// console.log(g.next());
+
+// console.log(g.next());
+
+// console.log(g.next());
+
+// console.log(g.next());
+
+// output:
+
+// { value: 1, done: false }
+
+// { value: 2, done: false }
+
+// { value: 3, done: true }
+
+// { value: undefined, done: true }
+
+/**
+ *EventEmitter
+ */
+
+function EventEmitter() {
+  this.__events = {};
+}
+
+EventEmitter.VERSION = "1.0.0";
+
+//绑定事件
+EventEmitter.prototype.on = function (eventName, event) {
+  let events = (this.__events[eventName] = this.__events[eventName] || []);
+  //是否存在该事件
+  let isExist = events.find((ev) => ev.listener === (event.listener || event));
+  if (!isExist) {
+    events.push(
+      //对象或函数
+      event.listener
+        ? event
+        : {
+            once: false,
+            listener: event,
+          }
+    );
+  }
+
+  return this;
+};
+//触发事件
+EventEmitter.prototype.emit = function (eventName, args) {
+  let events = this.__events[eventName] || [];
+
+  //多个事件
+  for (let event of events) {
+    event.listener.apply(this, args || []);
+    if (event.once) {
+      this.off(eventName, event);
+    }
+  }
+};
+//执行一次
+EventEmitter.prototype.once = function (eventName, event) {
+  return this.on(eventName, {
+    once: true,
+    listener: event.listener || event,
+  });
+};
+//移除事件
+EventEmitter.prototype.off = function (eventName, event) {
+  let events = this.__events[eventName] || [];
+  //事件下标
+  let eventIndex = events.findIndex(
+    (ev) => ev.listener === (event.listener || event)
+  );
+  //存在该事件时
+  if (eventIndex !== -1) events.splice(eventIndex, 1);
+};
+//移除所有事件
+EventEmitter.prototype.allOff = function (eventName) {
+  if (this.__events[eventName]) this.__events[eventName] = [];
+};
+
+// let em = new EventEmitter();
+
+// const fn1 = () => {
+//   console.log(6666);
+// };
+// const fn2 = () => {
+//   console.log(666776);
+// };
+// em.on("test", fn1);
+// em.on("test", fn2);
+// em.allOff("test");
+// em.emit("test");
