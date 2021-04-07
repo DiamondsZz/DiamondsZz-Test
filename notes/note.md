@@ -1067,3 +1067,631 @@ function sum (a,b) {
 * 在 Ignition 解释器处理完之后，如果发现一段代码被重复执行多次的情况，生成的字节码以及分析数据会传给 TurboFan 编译器，它会根据分析数据的情况生成优化好的机器码。再执行这段代码之后，只需要直接执行编译后的机器码，这样性能就会更好。
 * TurboFan 编译器，它是 JIT 优化的编译器，因为 V8 引擎是多线程的，TurboFan 的编译线程和生成字节码不会在同一个线程上，这样可以和 Ignition 解释器相互配合着使用，不受另一方的影响。
 * 由 Ignition 解释器收集的分析数据被 TurboFan 编译器使用，主要是通过一种推测优化的技术，生成已经优化的机器码来执行。
+
+
+
+
+#### thunk 函数
+```
+let isString = (obj) => {
+
+  return Object.prototype.toString.call(obj) === '[object String]';
+
+};
+
+let isFunction = (obj) => {
+
+  return Object.prototype.toString.call(obj) === '[object Function]';
+
+};
+
+let isArray = (obj) => {
+
+  return Object.prototype.toString.call(obj) === '[object Array]';
+
+};
+
+
+可以看到，其中出现了非常多重复的数据类型判断逻辑，平常业务开发中类似的重复逻辑的场景也同样会有很多。我们将它们做一下封装，如下所示。
+let isType = (type) => {
+
+  return (obj) => {
+
+    return Object.prototype.toString.call(obj) === `[object ${type}]`;
+
+  }
+
+}
+
+let isString = isType('String');
+
+let isArray = isType('Array');
+
+isString("123");    // true
+
+isArray([1,2,3]);   // true
+像 isType 这样的函数我们称为 thunk 函数，它的基本思路都是接收一定的参数，会生产出定制化的函数，最后使用定制化的函数去完成想要实现的功能。
+
+```
+#### Generator 和 thunk 结合
+```
+const readFileThunk = (filename) => {
+
+  return (callback) => {
+
+    fs.readFile(filename, callback);
+
+  }
+
+}
+
+const gen = function* () {
+
+  const data1 = yield readFileThunk('1.txt')
+
+  console.log(data1.toString())
+
+  const data2 = yield readFileThunk('2.txt')
+
+  console.log(data2.toString)
+
+}
+
+let g = gen();
+
+g.next().value((err, data1) => {
+
+  g.next(data1).value((err, data2) => {
+
+    g.next(data2);
+
+  })
+
+})
+上面第三段代码执行起来嵌套的情况还算简单，如果任务多起来，就会产生很多层的嵌套，可读性不强，
+function run(gen){
+
+  const next = (err, data) => {
+
+    let res = gen.next(data);
+
+    if(res.done) return;
+
+    res.value(next);
+
+  }
+
+  next();
+
+}
+
+run(g);
+
+```
+#### Generator 和 Promise 结合
+```
+// 最后包装成 Promise 对象进行返回
+
+const readFilePromise = (filename) => {
+
+  return new Promise((resolve, reject) => {
+
+    fs.readFile(filename, (err, data) => {
+
+      if(err) {
+
+        reject(err);
+
+      }else {
+
+        resolve(data);
+
+      }
+
+    })
+
+  }).then(res => res);
+
+}
+
+ let g = gen();
+
+// 这块和上面 thunk 的方式一样
+
+const gen = function* () {
+
+  const data1 = yield readFilePromise('1.txt')
+
+  console.log(data1.toString())
+
+  const data2 = yield readFilePromise('2.txt')
+
+  console.log(data2.toString)
+
+}
+
+// 这块和上面 thunk 的方式一样
+
+function run(gen){
+
+  const next = (err, data) => {
+
+    let res = gen.next(data);
+
+    if(res.done) return;
+
+    res.value.then(next);
+
+  }
+
+  next();
+
+}
+
+run(g);
+
+
+```
+
+#### co 函数库
+* 为什么 co 函数库可以自动执行 Generator 函数，它的处理原理是什么呢？
+1. 因为 Generator 函数就是一个异步操作的容器，它需要一种自动执行机制，co 函数接受 Generator 函数作为参数，并最后返回一个 Promise 对象。
+2. 在返回的 Promise 对象里面，co 先检查参数 gen 是否为 Generator 函数。如果是，就执行该函数；如果不是就返回，并将 Promise 对象的状态改为 resolved。
+3. co 将 Generator 函数的内部指针对象的 next 方法，包装成 onFulfilled 函数。这主要是为了能够捕捉抛出的错误。
+4. 关键的是 next 函数，它会反复调用自身。
+### async/await
+```
+// readFilePromise 依旧返回 Promise 对象
+
+const readFilePromise = (filename) => {
+
+  return new Promise((resolve, reject) => {
+
+    fs.readFile(filename, (err, data) => {
+
+      if(err) {
+
+        reject(err);
+
+      }else {
+
+        resolve(data);
+
+      }
+
+    })
+
+  }).then(res => res);
+
+}
+
+// 这里把 Generator的 * 换成 async，把 yield 换成 await
+
+const gen = async function() {
+
+  const data1 = await readFilePromise('1.txt')
+
+  console.log(data1.toString())
+
+  const data2 = await readFilePromise('2.txt')
+
+  console.log(data2.toString)
+
+}
+
+
+```
+* async 函数对 Generator 函数的改进，主要体现在以下三点
+内置执行器：Generator 函数的执行必须靠执行器，因为不能一次性执行完成，所以之后才有了开源的 co 函数库。但是，async 函数和正常的函数一样执行，也不用 co 函数库，也不用使用 next 方法，而 async 函数自带执行器，会自动执行。
+适用性更好：co 函数库有条件约束，yield 命令后面只能是 Thunk 函数或 Promise 对象，但是 async 函数的 await 关键词后面，可以不受约束。
+可读性更好：async 和 await，比起使用 * 号和 yield，语义更清晰明了。
+```
+async function func() {
+
+  return 100;
+
+}
+
+console.log(func());
+
+// Promise {<fulfilled>: 100}
+从执行的结果可以看出，async 函数 func 最后返回的结果直接是 Promise 对象，比较方便让开发者继续往后处理。而之前 Generator 并不会自动执行，需要通过 next 方法控制，最后返回的也并不是 Promise 对象，而是需要通过 co 函数库来实现最后返回 Promise 对象。
+```
+### EventEmitter 
+* Node.js的events 模块对外提供了一个 EventEmitter 对象，用于对 Node.js 中的事件进行统一管理。
+```
+var events = require('events');
+
+var eventEmitter = new events.EventEmitter();
+
+eventEmitter.on('say',function(name){
+
+    console.log('Hello',name);
+
+})
+
+eventEmitter.emit('say','Jonh');
+
+```
+#### addListener 和 removeListener、on 和 off 方法对比
+```
+addListener 方法的作用是为指定事件添加一个监听器，其实和 on 方法实现的功能是一样的，on 其实就是 addListener 方法的一个别名。
+二者实现的作用是一样的，同时 removeListener 方法的作用是为移除某个事件的监听器，同样 off 也是 removeListener 的别名。
+var events = require('events');
+
+var emitter = new events.EventEmitter();
+
+function hello1(name){
+
+  console.log("hello 1",name);
+
+}
+
+function hello2(name){
+
+  console.log("hello 2",name);
+
+}
+
+emitter.addListener('say',hello1);
+
+emitter.addListener('say',hello2);
+
+emitter.emit('say','John');
+
+//输出hello 1 John 
+
+//输出hello 2 John
+
+emitter.removeListener('say',hello1);
+
+emitter.emit('say','John');
+
+//相应的，监听say事件的hello1事件被移除
+
+//只输出hello 2 John
+
+```
+#### removeListener 和 removeAllListeners
+```
+var events = require('events');
+
+var emitter = new events.EventEmitter();
+
+function hello1(name){
+
+  console.log("hello 1",name);
+
+}
+
+function hello2(name){
+
+  console.log("hello 2",name);
+
+}
+
+emitter.addListener('say',hello1);
+
+emitter.addListener('say',hello2);
+
+emitter.removeAllListeners('say');
+
+emitter.emit('say','John');
+
+//removeAllListeners 移除了所有关于 say 事件的监听
+
+//因此没有任何输出
+
+```
+#### on 和 once 方法区别
+```
+var events = require('events');
+
+var emitter = new events.EventEmitter();
+
+function hello(name){
+
+  console.log("hello",name);
+
+}
+
+emitter.on('say',hello);
+
+emitter.emit('say','John');
+
+emitter.emit('say','Lily');
+
+emitter.emit('say','Lucy');
+
+//会输出 hello John、hello Lily、hello Lucy，之后还要加也可以继续触发
+
+emitter.once('see',hello);
+
+emitter.emit('see','Tom');
+
+//只会输出一次 hello Tom
+
+```
+#### 实现一个 EventEmitter
+* 自己封装一个能在浏览器中跑的EventEmitter，并应用在你的业务代码中还是能带来不少方便的，它可以帮你实现自定义事件的订阅和发布，从而提升业务开发的便利性。
+* EventEmitter 采用的正是发布-订阅模式。
+* 发布-订阅模式在观察者模式的基础上，在目标和观察者之间增加了一个调度中心。
+* 在 Vue 框架中不同组件之间的通讯里，有一种解决方案叫 EventBus。和 EventEmitter的思路类似，它的基本用途是将 EventBus 作为组件传递数据的桥梁，所有组件共用相同的事件中心，可以向该中心注册发送事件或接收事件，所有组件都可以收到通知，使用起来非常便利，其核心其实就是发布-订阅模式的落地实现。
+```
+
+function EventEmitter() {
+
+    this.__events = {}
+
+}
+
+EventEmitter.VERSION = '1.0.0';
+
+从上面的代码中可以看到，我们先初始化了一个内部的__events 的对象，用来存放自定义事件，以及自定义事件的回调函数。
+
+EventEmitter.prototype.on = function(eventName, listener){
+
+	  if (!eventName || !listener) return;
+
+      // 判断回调的 listener 是否为函数
+
+	  if (!isValidListener(listener)) {
+
+	       throw new TypeError('listener must be a function');
+
+	  }
+
+	   var events = this.__events;
+
+	   var listeners = events[eventName] = events[eventName] || [];
+
+	   var listenerIsWrapped = typeof listener === 'object';
+
+       // 不重复添加事件，判断是否有一样的
+
+       if (indexOf(listeners, listener) === -1) {
+
+           listeners.push(listenerIsWrapped ? listener : {
+
+               listener: listener,
+
+               once: false
+
+           });
+
+       }
+
+	   return this;
+
+};
+
+// 判断是否是合法的 listener
+
+ function isValidListener(listener) {
+
+     if (typeof listener === 'function') {
+
+         return true;
+
+     } else if (listener && typeof listener === 'object') {
+
+         return isValidListener(listener.listener);
+
+     } else {
+
+         return false;
+
+     }
+
+}
+
+// 顾名思义，判断新增自定义事件是否存在
+
+function indexOf(array, item) {
+
+     var result = -1
+
+     item = typeof item === 'object' ? item.listener : item;
+
+     for (var i = 0, len = array.length; i < len; i++) {
+
+         if (array[i].listener === item) {
+
+             result = i;
+
+             break;
+
+         }
+
+     }
+
+     return result;
+
+}
+从上面的代码中可以看出，on 方法的核心思路就是，当调用订阅一个自定义事件的时候，只要该事件通过校验合法之后，就把该自定义事件 push 到 this.__events 这个对象中存储，等需要出发的时候，则直接从通过获取 __events 中对应事件的 listener 回调函数，而后直接执行该回调方法就能实现想要的效果。
+
+
+
+EventEmitter.prototype.emit = function(eventName, args) {
+
+     // 直接通过内部对象获取对应自定义事件的回调函数
+
+     var listeners = this.__events[eventName];
+
+     if (!listeners) return;
+
+     // 需要考虑多个 listener 的情况
+
+     for (var i = 0; i < listeners.length; i++) {
+
+         var listener = listeners[i];
+
+         if (listener) {
+
+             listener.listener.apply(this, args || []);
+
+             // 给 listener 中 once 为 true 的进行特殊处理
+
+             if (listener.once) {
+
+                 this.off(eventName, listener.listener)
+
+             }
+
+         }
+
+     }
+
+     return this;
+
+};
+
+
+
+EventEmitter.prototype.off = function(eventName, listener) {
+
+     var listeners = this.__events[eventName];
+
+     if (!listeners) return;
+
+     var index;
+
+     for (var i = 0, len = listeners.length; i < len; i++) {
+
+	    if (listeners[i] && listeners[i].listener === listener) {
+
+           index = i;
+
+           break;
+
+        }
+
+    }
+
+    // off 的关键
+
+    if (typeof index !== 'undefined') {
+
+         listeners.splice(index, 1, null)
+
+    }
+
+    return this;
+
+};
+从上面的代码中可以看出 emit 的处理方式，其实就是拿到对应自定义事件进行 apply 执行，在执行过程中对于一开始 once 方法绑定的自定义事件进行特殊的处理，当once 为 true的时候，再触发 off 方法对该自定义事件进行解绑，从而实现自定义事件一次执行的效果。
+
+
+
+EventEmitter.prototype.once = function(eventName, listener）{
+
+    // 直接调用 on 方法，once 参数传入 true，待执行之后进行 once 处理
+
+     return this.on(eventName, {
+
+         listener: listener,
+
+         once: true
+
+     })
+
+ };
+
+EventEmitter.prototype.allOff = function(eventName) {
+
+     // 如果该 eventName 存在，则将其对应的 listeners 的数组直接清空
+
+     if (eventName && this.__events[eventName]) {
+
+         this.__events[eventName] = []
+
+     } else {
+
+         this.__events = {}
+
+     }
+
+};
+
+从上面的代码中可以看到，once 方法的本质还是调用 on 方法，只不过传入的参数区分和非一次执行的情况。当再次触发 emit 方法的时候，once 绑定的执行一次之后再进行解绑。
+
+这样，alloff 方法也很好理解了，其实就是对内部的__events 对象进行清空，清空之后如果再次触发自定义事件，也就无法触发回调函数了。
+
+
+
+
+
+
+
+
+
+
+
+
+---------------------------Low逼版，见笑了-----------------------------
+
+
+
+
+function EventEmitter() {
+  this.__events = {};
+}
+
+EventEmitter.VERSION = "1.0.0";
+
+//绑定事件
+EventEmitter.prototype.on = function (eventName, event) {
+  let events = (this.__events[eventName] = this.__events[eventName] || []);
+  //是否存在该事件
+  let isExist = events.find((ev) => ev.listener === (event.listener || event));
+  if (!isExist) {
+    events.push(
+      //对象或函数
+      event.listener
+        ? event
+        : {
+            once: false,
+            listener: event,
+          }
+    );
+  }
+
+  return this;
+};
+//触发事件
+EventEmitter.prototype.emit = function (eventName, args) {
+  let events = this.__events[eventName] || [];
+
+  //多个事件
+  for (let event of events) {
+    event.listener.apply(this, args || []);
+    if (event.once) {
+      this.off(eventName, event);
+    }
+  }
+};
+//执行一次
+EventEmitter.prototype.once = function (eventName, event) {
+  return this.on(eventName, {
+    once: true,
+    listener: event.listener || event,
+  });
+};
+//移除事件
+EventEmitter.prototype.off = function (eventName, event) {
+  let events = this.__events[eventName] || [];
+  //事件下标
+  let eventIndex = events.findIndex(
+    (ev) => ev.listener === (event.listener || event)
+  );
+  //存在该事件时
+  if (eventIndex !== -1) events.splice(eventIndex, 1);
+};
+//移除所有事件
+EventEmitter.prototype.allOff = function (eventName) {
+  if (this.__events[eventName]) this.__events[eventName] = [];
+};
+
+
+
+```
