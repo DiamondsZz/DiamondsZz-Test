@@ -186,9 +186,9 @@ obj = Object.create(obj, Object.getOwnPropertyDescriptors(obj));
 
 obj.loop = obj; // 设置loop成循环引用的属性
 
-let cloneObj = deepClone(obj);
+// let cloneObj = deepClone(obj);
 
-cloneObj.arr.push(4);
+// cloneObj.arr.push(4);
 
 //console.log("obj", obj);
 
@@ -728,53 +728,62 @@ EventEmitter.prototype.allOff = function (eventName) {
 // em.allOff("test");
 // em.emit("test");
 
-Promise.resolve()
-  .then(() => {
-    console.log(0);
-  })
-  .then((res) => {
-    console.log(res);
-    //console.log("tt");
-  })
-  .then(() => {
-    //console.log(res);
-    console.log("ttt");
-  })
-  .then(() => {
-    //console.log(res);
-    console.log("tttt");
-  });
+// Promise.resolve()
+//   .then(() => {
+//     console.log(0);
+//   })
+//   .then((res) => {
+//     console.log(res);
+//     //console.log("tt");
+//   })
+//   .then(() => {
+//     //console.log(res);
+//     console.log("ttt");
+//   })
+//   .then(() => {
+//     //console.log(res);
+//     console.log("tttt");
+//   });
 
-Promise.resolve()
-  .then(() => {
-    console.log(1);
-  })
-  .then(() => {
-    console.log(2);
-  })
-  .then(() => {
-    console.log(3);
-  })
-  .then(() => {
-    console.log(5);
-  })
-  .then(() => {
-    console.log(6);
-  });
+// Promise.resolve()
+//   .then(() => {
+//     console.log(1);
+//   })
+//   .then(() => {
+//     console.log(2);
+//   })
+//   .then(() => {
+//     console.log(3);
+//   })
+//   .then(() => {
+//     console.log(5);
+//   })
+//   .then(() => {
+//     console.log(6);
+//   });
 
-Promise.resolve()
-  .then(() => {
-    console.log(31);
-  })
-  .then(() => {
-    console.log(32);
-  })
-  .then(() => {
-    console.log(33);
-  })
-  .then(() => {
-    console.log(35);
-  })
-  .then(() => {
-    console.log(36);
+// Promise.resolve()
+//   .then(() => {
+//     console.log(31);
+//   })
+//   .then(() => {
+//     console.log(32);
+//   })
+//   .then(() => {
+//     console.log(33);
+//   })
+//   .then(() => {
+//     console.log(35);
+//   })
+//   .then(() => {
+//     console.log(36);
+//   });
+
+import APromise from "./promise.js";
+new APromise((resolve, reject) => {
+  setTimeout(() => {
+    resolve("success");
   });
+}).then((res) => {
+  console.log(res);
+});
