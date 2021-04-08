@@ -727,3 +727,54 @@ EventEmitter.prototype.allOff = function (eventName) {
 // em.on("test", fn2);
 // em.allOff("test");
 // em.emit("test");
+
+Promise.resolve()
+  .then(() => {
+    console.log(0);
+  })
+  .then((res) => {
+    console.log(res);
+    //console.log("tt");
+  })
+  .then(() => {
+    //console.log(res);
+    console.log("ttt");
+  })
+  .then(() => {
+    //console.log(res);
+    console.log("tttt");
+  });
+
+Promise.resolve()
+  .then(() => {
+    console.log(1);
+  })
+  .then(() => {
+    console.log(2);
+  })
+  .then(() => {
+    console.log(3);
+  })
+  .then(() => {
+    console.log(5);
+  })
+  .then(() => {
+    console.log(6);
+  });
+
+Promise.resolve()
+  .then(() => {
+    console.log(31);
+  })
+  .then(() => {
+    console.log(32);
+  })
+  .then(() => {
+    console.log(33);
+  })
+  .then(() => {
+    console.log(35);
+  })
+  .then(() => {
+    console.log(36);
+  });
