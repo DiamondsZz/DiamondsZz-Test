@@ -624,7 +624,6 @@ function* gen() {
   console.log("enter");
 
   let a = yield 1;
-
   let b = yield (function () {
     return 2;
   })();
