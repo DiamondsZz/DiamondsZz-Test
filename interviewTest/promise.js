@@ -55,6 +55,7 @@ class APromise {
     }
   };
   constructor(executor) {
+    //异常捕获
     try {
       //执行器
       executor(this.resolve, this.reject);
