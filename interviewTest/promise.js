@@ -78,6 +78,7 @@ class APromise {
       //执行器
       executor(this.resolve, this.reject);
     } catch (error) {
+      console.log(error);
       this.reject(error);
     }
   }
