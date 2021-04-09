@@ -35,9 +35,10 @@ class APromise {
   };
   //处理then方法回调函数返回值
   resolvePromise = (res, resolve, reject) => {
-    //返回值为promise时
+    //返回值为promise（这里的promise指then方法成功回调时返回的promise）时
     if (res instanceof APromise) {
-      //对返回的promise进行处理
+      //对返回的promise（这里的promise指then方法成功回调时返回的promise）的处理结果进行处理
+      //通过resolve/reject对返回的promise（这里的promise指调用then方法时返回的promise）状态进行处理
       res.then(resolve, reject);
     }
     //普通值
