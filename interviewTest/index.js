@@ -783,6 +783,11 @@ new APromise((resolve, reject) => {
   setTimeout(() => {
     resolve("success");
   });
-}).then((res) => {
-  console.log(res);
-});
+}).then(
+  (res) => {
+    console.log(res);
+  },
+  (reason) => {
+    console.log(reason);
+  }
+);
