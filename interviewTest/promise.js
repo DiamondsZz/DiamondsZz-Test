@@ -38,7 +38,7 @@ class APromise {
     //返回值为promise时
     if (res instanceof APromise) {
       //对返回的promise进行处理
-      //res.then(resolve, reject);
+      res.then(resolve, reject);
     }
     //普通值
     else {
