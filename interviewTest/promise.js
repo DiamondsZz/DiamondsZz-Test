@@ -5,7 +5,7 @@ class APromise {
   value = "";
   //处理失败时的原因
   reason = "";
-  //处理成功回调函数
+  //处理成功回调函数     then方法被多次调用时，采用数组进行存储回调函数
   fullFilledCallbacks = [];
   //处理失败回调函数
   rejectedCallBacks = [];
@@ -33,26 +33,43 @@ class APromise {
       }
     }
   };
+  //处理then方法回调函数返回值
+  resolvePromise = (res, resolve, reject) => {
+    //返回值为promise时
+    if (res instanceof APromise) {
+      //对返回的promise进行处理
+      //res.then(resolve, reject);
+    }
+    //普通值
+    else {
+      resolve(res);
+    }
+  };
   //处理完成
   then = (onFullFilled, onRejected) => {
-    //成功回调
-    if (this.status === "fullFilled") {
-      onFullFilled(this.value);
-    }
-    //失败回调
-    if (this.status === "rejected") {
-      onRejected(this.reason);
-    }
+    const promise = new APromise((resolve, reject) => {
+      //成功回调
+      if (this.status === "fullFilled") {
+        const res = onFullFilled(this.value);
+        this.resolvePromise(res, resolve, reject);
+      }
+      //失败回调
+      if (this.status === "rejected") {
+        onRejected(this.reason);
+      }
 
-    //处理异步任务
-    if (this.status === "pending") {
-      //对成功、失败回调进行存储。异步任务执行成功后再进行处理
+      //处理异步任务
+      if (this.status === "pending") {
+        //对成功、失败回调进行存储。异步任务执行成功后再进行处理
 
-      //对成功处理函数存储
-      this.fullFilledCallbacks.push(onFullFilled);
-      //对失败处理函数进行存储
-      this.rejectedCallBacks.push(onRejected);
-    }
+        //对成功处理函数存储
+        this.fullFilledCallbacks.push(onFullFilled);
+        //对失败处理函数进行存储
+        this.rejectedCallBacks.push(onRejected);
+      }
+    });
+
+    return promise;
   };
   constructor(executor) {
     //异常捕获

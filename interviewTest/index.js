@@ -780,21 +780,16 @@ EventEmitter.prototype.allOff = function (eventName) {
 
 import APromise from "./promise.js";
 const promise = new APromise((resolve, reject) => {
-  setTimeout(() => {
-    resolve("success");
-  });
+  resolve("success");
 });
-promise.then(
-  (res) => {
-    console.log(1);
-    console.log(res);
-  },
-  (reason) => {
-    console.log(reason);
-  }
-);
 
-promise.then((res) => {
-  console.log(2);
-  console.log(res);
-});
+promise
+  .then((res) => {
+    console.log(res);
+    return new APromise((resolve, reject) => {
+      resolve("666");
+    });
+  })
+  .then((res) => {
+    console.log(res);
+  });
