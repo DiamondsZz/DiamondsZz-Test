@@ -52,31 +52,71 @@ class APromise {
       resolve(res);
     }
   };
-  //处理完成
+  //处理完成   (rejected/pending逻辑参考fullFilled状态)
   then = (onFullFilled, onRejected) => {
+    // 如果不传，就使用默认函数
+    onFulfilled =
+      typeof onFullFilled === "function" ? onFullFilled : (value) => value;
+      // 如果不传，就使用默认函数
+    onRejected =
+      typeof onRejected === "function"
+        ? onRejected
+        : (reason) => {
+            throw reason;
+          };
+
+    //返回promise用于链式调用
     const promise = new APromise((resolve, reject) => {
       //成功回调
       if (this.status === "fullFilled") {
         // 为了拿到上面返回的promise实例对象，需要创建一个微任务等待promise初始化
         //否则，会报ReferenceError: Cannot access 'promise' before initialization
         queueMicrotask(() => {
-          const res = onFullFilled(this.value);
-          this.resolvePromise(promise, res, resolve, reject);
+          //异常捕获
+          try {
+            const res = onFullFilled(this.value);
+            this.resolvePromise(promise, res, resolve, reject);
+          } catch (error) {
+            reject(error);
+          }
         });
       }
       //失败回调
       if (this.status === "rejected") {
-        onRejected(this.reason);
+        queueMicrotask(() => {
+          try {
+            const res = onRejected(this.reason);
+            this.resolvePromise(promise, res, resolve, reject);
+          } catch (error) {
+            reject(error);
+          }
+        });
       }
 
       //处理异步任务
       if (this.status === "pending") {
         //对成功、失败回调进行存储。异步任务执行成功后再进行处理
-
         //对成功处理函数存储
-        this.fullFilledCallbacks.push(onFullFilled);
+        this.fullFilledCallbacks.push(() => {
+          //异常捕获
+          try {
+            const res = onFullFilled(this.value);
+            this.resolvePromise(promise, res, resolve, reject);
+          } catch (error) {
+            reject(error);
+          }
+        });
         //对失败处理函数进行存储
-        this.rejectedCallBacks.push(onRejected);
+        this.rejectedCallBacks.push(() => {
+          queueMicrotask(() => {
+            try {
+              const res = onRejected(this.reason);
+              this.resolvePromise(promise, res, resolve, reject);
+            } catch (error) {
+              reject(error);
+            }
+          });
+        });
       }
     });
 
