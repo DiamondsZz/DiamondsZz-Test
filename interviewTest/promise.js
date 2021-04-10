@@ -34,7 +34,13 @@ class APromise {
     }
   };
   //处理then方法回调函数返回值
-  resolvePromise = (res, resolve, reject) => {
+  resolvePromise = (promise, res, resolve, reject) => {
+    //then方法成功回调返回值和then方法返回值一样时
+    if (promise === res) {
+      //避免循环引用
+      reject(new TypeError("Chaining cycle detected for promise #<Promise>"));
+    }
+
     //返回值为promise（这里的promise指then方法成功回调时返回的promise）时
     if (res instanceof APromise) {
       //对返回的promise（这里的promise指then方法成功回调时返回的promise）的处理结果进行处理
@@ -51,8 +57,12 @@ class APromise {
     const promise = new APromise((resolve, reject) => {
       //成功回调
       if (this.status === "fullFilled") {
-        const res = onFullFilled(this.value);
-        this.resolvePromise(res, resolve, reject);
+        // 为了拿到上面返回的promise实例对象，需要创建一个微任务等待promise初始化
+        //否则，会报ReferenceError: Cannot access 'promise' before initialization
+        queueMicrotask(() => {
+          const res = onFullFilled(this.value);
+          this.resolvePromise(promise, res, resolve, reject);
+        });
       }
       //失败回调
       if (this.status === "rejected") {
