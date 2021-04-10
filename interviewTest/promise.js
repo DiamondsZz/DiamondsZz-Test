@@ -55,9 +55,9 @@ class APromise {
   //处理完成   (rejected/pending逻辑参考fullFilled状态)
   then = (onFullFilled, onRejected) => {
     // 如果不传，就使用默认函数
-    onFulfilled =
+    onFullFilled =
       typeof onFullFilled === "function" ? onFullFilled : (value) => value;
-      // 如果不传，就使用默认函数
+    // 如果不传，就使用默认函数
     onRejected =
       typeof onRejected === "function"
         ? onRejected
