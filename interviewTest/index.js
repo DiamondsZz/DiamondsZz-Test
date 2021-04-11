@@ -779,13 +779,61 @@ EventEmitter.prototype.allOff = function (eventName) {
 //   });
 
 import APromise from "./promise.js";
-const promise = new APromise((resolve, reject) => {
-  resolve("success");
-})
-  .then((res) => {
-    console.log(res);
-    return new APromise((resolve) => {
-      resolve("666");
-    });
-  })
-  .then((res) => console.log(res));
+// const promise = new APromise((resolve, reject) => {
+//   resolve("success");
+// })
+//   .then((res) => {
+//     console.log(res);
+//     return new APromise((resolve) => {
+//       resolve("666");
+//     });
+//   })
+//   .then((res) => console.log(res));
+
+// 使用 Array 构造器，可以自定义长度
+
+var a2 = Array(6); // [empty × 6]
+
+// 使用对象字面量
+
+var b2 = [];
+
+b2.length = 6; // [undefined × 6]
+//console.log(a2,b2);
+
+let arr3 = Array("22");
+//console.log(arr3);
+
+var merge = function (nums1, m, nums2, n) {
+  nums1.splice(m);
+
+  nums2.splice(n);
+  nums1.push(...nums2);
+
+  nums1.sort((a, b) => a - b); // nums1从小到大排列，所以是a-b
+
+  console.log(nums1);
+};
+//merge([2, 5, 6], 3, [2, 3], 2);
+
+var arr = [1, 2, 3, 4];
+
+// console.log(
+//   arr.reduce(function (pre, cur) {
+//     return pre + cur;
+//   })
+// );
+
+function test() {
+  //console.log([].slice.call(arguments));
+  //console.log(typeof arguments);
+  console.log([].concat.apply([], arguments));
+}
+//test(5,6,7)
+
+// console.log([3,45,[3,6]].toString().split(','));
+console.log(
+  JSON.parse(
+    "[" + JSON.stringify([3, 45, [3, 6]]).replace(/(\[|\])/g, "") + "]"
+  )
+);
