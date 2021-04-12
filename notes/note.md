@@ -1914,6 +1914,14 @@ function resolvePromise(promise, x, resolve, reject) {
 module.exports = MyPromise;
 ```
 
+
+
+
+----------------------------------------------------------------------------------
+
+
+
+
 ## encodeURI encodeURIComponent 
 ```
 var set1 = ";,/?:@&=+$";  // 保留字符
@@ -1961,3 +1969,28 @@ el.dataset.dateOfBirth = '1960-10-03'; // set the DOB.
 el.dataset.someDataAttr = 'mydata';
 // 'someDataAttr' in el.dataset === true
 ```
+## load DOMContentLoaded
+* 当整个页面及所有依赖资源如样式表和图片都已完成加载时，将触发load事件。它与DOMContentLoaded不同，后者只要页面DOM加载完成就触发，无需等待依赖资源的加载。
+## script
+* async 该属性能够消除解析阻塞的 Javascript。解析阻塞的 Javascript 会导致浏览器必须加载并且执行脚本，之后才能继续解析。defer 在这一点上也有类似的作用。
+* defer 这个布尔属性被设定用来通知浏览器该脚本将在文档完成解析后，触发 DOMContentLoaded (en-US) 事件前执行。有 defer 属性的脚本会阻止 DOMContentLoaded 事件，直到脚本被加载并且解析完成。defer 属性对模块脚本没有作用 —— 他们默认 defer。
+## 位运算
+```
+操作	结果	等同于	结果
+5 & 1	1	0101 & 0001	0001
+5 | 1	5	0101 | 0001	0101
+5 ^ 1	4	0101 ^ 0001	0100    如果两位只有一位为 1 则设置为 1
+~ 5	    10	~0101	    1010    反转所有位
+5 << 1	10	0101 << 1	1010    通过从右推入零向左位移，并使最左边的位脱落。
+5 >> 1	2	0101 >> 1	0010    通过从左推入最左位的拷贝来向右位移，并使最右边的位脱落。
+5 >>> 1	2	0101 >>> 1	0010    通过从左推入零来向右位移，并使最右边的位脱落。
+```
+* x >>> 0有什么意义
+1. 移位操作符在移位前做了两种转换，第一将不是number类型的数据转换为number，第二将number转换为无符号的32bit数据，也就是Uint32类型。这些与移位的位数无关，移位0位主要就是用了js的内部特性做了前两种转换。
+2. x >>> 0本质上就是保证x有意义（为数字类型），且为正整数，在有效的数组范围内（0 ～ 0xFFFFFFFF），且在无意义的情况下缺省值为0。
+
+
+
+
+
+
