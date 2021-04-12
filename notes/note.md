@@ -1914,4 +1914,50 @@ function resolvePromise(promise, x, resolve, reject) {
 module.exports = MyPromise;
 ```
 
+## encodeURI encodeURIComponent 
+```
+var set1 = ";,/?:@&=+$";  // 保留字符
+var set2 = "-_.!~*'()";   // 不转义字符
+var set3 = "#";           // 数字标志
+var set4 = "ABC abc 123"; // 字母数字字符和空格
 
+console.log(encodeURI(set1)); // ;,/?:@&=+$
+console.log(encodeURI(set2)); // -_.!~*'()
+console.log(encodeURI(set3)); // #
+console.log(encodeURI(set4)); // ABC%20abc%20123 (the space gets encoded as %20)
+
+console.log(encodeURIComponent(set1)); // %3B%2C%2F%3F%3A%40%26%3D%2B%24
+console.log(encodeURIComponent(set2)); // -_.!~*'()
+console.log(encodeURIComponent(set3)); // %23
+console.log(encodeURIComponent(set4)); // ABC%20abc%20123 (the space gets encoded as %20)
+```
+### encodeURI
+* encodeURI 会替换所有的字符，但不包括以下字符:
+; , / ? : @ & = + $ 字母 数字 - _ . ! ~ * ' ( ) #
+* encodeURI 自身无法产生能适用于HTTP GET 或 POST 请求的URI，例如对于 XMLHTTPRequests, 因为 "&", "+", 和 "=" 不会被编码，然而在 GET 和 POST 请求中它们是特殊字符。然而encodeURIComponent这个方法会对这些字符编码。
+### encodeURIComponent
+* encodeURIComponent 转义除了如下所示外的所有字符：
+ A-Z a-z 0-9 - _ . ! ~ * ' ( )
+## img标签
+* loading属性：eager 立即加载   lazy延迟加载
+* onload事件在图片加载完成后立即执行
+* 可以通过getBoundingClientRect().top<window.innerHeight来判断是否加载图片
+## dataset
+```
+<div id="user" data-id="1234567890" data-user="johndoe" data-date-of-birth>John Doe
+</div>
+
+var el = document.querySelector('#user');
+
+// el.id == 'user'
+// el.dataset.id === '1234567890'
+// el.dataset.user === 'johndoe'
+// el.dataset.dateOfBirth === ''
+
+el.dataset.dateOfBirth = '1960-10-03'; // set the DOB.
+
+// 'someDataAttr' in el.dataset === false
+
+el.dataset.someDataAttr = 'mydata';
+// 'someDataAttr' in el.dataset === true
+```
