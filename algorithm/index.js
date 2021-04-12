@@ -581,4 +581,54 @@ function test21(str) {
   if (left === right) console.log("是");
   else console.log("否");
 }
-test21("1221");
+//test21("1221");
+/**
+ * 堆排序
+ */
+
+var len; // 因为声明的多个函数都需要数据长度，所以把len设置成为全局变量
+
+function buildMaxHeap(arr) {
+  // 建立大顶堆
+  len = arr.length;
+  for (var i = Math.floor(len / 2); i >= 0; i--) {
+    heapify(arr, i);
+  }
+}
+
+function heapify(arr, i) {
+  // 堆调整
+  var left = 2 * i,
+    right = 2 * i + 1,
+    root = i;
+
+  if (left < len && arr[left] > arr[root]) {
+    root = left;
+  }
+
+  if (right < len && arr[right] > arr[root]) {
+    root = right;
+  }
+
+  if (root != i) {
+    swap(arr, i, root);
+    heapify(arr, root);
+  }
+}
+
+function swap(arr, i, j) {
+  var temp = arr[i];
+  arr[i] = arr[j];
+  arr[j] = temp;
+}
+
+function heapSort(arr) {
+  buildMaxHeap(arr);
+  for (var i = arr.length - 1; i > 0; i--) {
+    swap(arr, 0, i);
+    len--;
+    heapify(arr, 0);
+  }
+  return arr;
+}
+console.log(heapSort([2, 6, 3, 1, 5, 2]));
