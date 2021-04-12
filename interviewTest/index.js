@@ -831,9 +831,12 @@ function test() {
 }
 //test(5,6,7)
 
+/**
+ * 类数组转数组
+ */
 // console.log([3,45,[3,6]].toString().split(','));
-console.log(
-  JSON.parse(
-    "[" + JSON.stringify([3, 45, [3, 6]]).replace(/(\[|\])/g, "") + "]"
-  )
-);
+// console.log(
+//   JSON.parse(
+//     "[" + JSON.stringify([3, 45, [3, 6]]).replace(/(\[|\])/g, "") + "]"
+//   )
+// );
