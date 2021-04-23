@@ -2698,6 +2698,28 @@ foo()
 
 
 ## 作用域链和闭包 ：代码中出现相同的变量，JavaScript引擎是如何选择的？
+* ES6 是如何通过变量环境和词法环境来同时支持变量提升和块级作用域
+* 在每个执行上下文的变量环境中，都包含了一个外部引用，用来指向外部的执行上下文，我们把这个外部引用称为 outer。
+```
+
+function bar() {
+    console.log(myName)
+}
+function foo() {
+    var myName = "diamonds"
+    bar()
+}
+var myName = "diamond"
+foo()
+
+上面那段代码在查找 myName 变量时，如果在当前的变量环境中没有查找到，那么 JavaScript 引擎会继续在 outer 所指向的执行上下文中查找。
+bar 函数和 foo 函数的 outer 都是指向全局上下文的，这也就意味着如果在 bar 函数或者 foo 函数中使用了外部变量，那么 JavaScript 引擎会去全局执行上下文中查找。我们把这个查找的链条就称为作用域链。
+
+
+
+foo 函数调用的 bar 函数，那为什么 bar 函数的外部引用是全局执行上下文，而不是 foo 函数的执行上下文？
+要回答这个问题，你还需要知道什么是词法作用域。这是因为在 JavaScript 执行过程中，其作用域链是由词法作用域决定的。
+这是因为根据词法作用域，foo 和 bar 的上级作用域都是全局作用域，所以如果 foo 或者 bar 函数使用了一个它们没有定义的变量，那么它们会到全局作用域去查找。
 
 
 
@@ -2706,9 +2728,97 @@ foo()
 
 
 
+```
+### 词法作用域
+* 词法作用域就是指作用域是由代码中函数声明的位置来决定的，所以词法作用域是静态的作用域，通过它就能够预测代码在执行过程中如何查找标识符。
+```
+let count=1
+function main(){
+let count=2
+function bar(){
+let count=3
+function foo(){
+let count=4
+}
+}
+
+词法作用域就是根据代码的位置来决定的，其中 main 函数包含了 bar 函数，bar 函数中包含了 foo 函数，因为 JavaScript 作用域链是由词法作用域决定的，所以整个词法作用域链的顺序是：foo 函数作用域—>bar 函数作用域—>main 函数作用域—> 全局作用域。
 
 
 
+```
+* 词法作用域是代码编译阶段就决定好的，和函数是怎么调用的没有关系。
+
+### 闭包
+```
+
+function foo() {
+    var myName = "diamond"
+    let test1 = 1
+    const test2 = 2
+    var innerBar = {
+        getName:function(){
+            console.log(test1)
+            return myName
+        },
+        setName:function(newName){
+            myName = newName
+        }
+    }
+    return innerBar
+}
+var bar = foo()
+bar.setName("diamonds")
+bar.getName()
+console.log(bar.getName())
+
+
+在 JavaScript 中，根据词法作用域的规则，内部函数总是可以访问其外部函数中声明的变量，当通过调用一个外部函数返回一个内部函数后，即使该外部函数已经执行结束了，但是内部函数引用外部函数的变量依然保存在内存中，我们就把这些变量的集合称为闭包。
+比如外部函数是 foo，那么这些变量的集合就称为 foo 函数的闭包。
+```
+* 如果该闭包会一直使用，那么它可以作为全局变量而存在；但如果使用频率不高，而且占用内存又比较大的话，那就尽量让它成为一个局部变量。
+
+## this：从JavaScript执行上下文的视角讲清楚this
+* this 是和执行上下文绑定的，也就是说每个执行上下文中都有一个 this
+* 执行上下文主要分为三种——全局执行上下文、函数执行上下文和 eval 执行上下文，所以对应的 this 也只有这三种——全局执行上下文中的 this、函数中的 this 和 eval 中的 this。
+### this 的设计缺陷以及应对方案
+* 嵌套函数中的 this 不会从外层函数中继承
+```
+
+var myObj = {
+  name : "diamonds", 
+  showThis: function(){
+    console.log(this)
+    function bar(){console.log(this)}
+    bar()
+  }
+}
+myObj.showThis()
+
+执行这段代码后，你会发现函数 bar 中的 this 指向的是全局 window 对象，而函数 showThis 中的 this 指向的是 myObj 对象。
+
+
+
+var myObj = {
+  name : "diamond", 
+  showThis: function(){
+    console.log(this)
+    var bar = ()=>{
+      this.name = "diamonds"
+      console.log(this)
+    }
+    bar()
+  }
+}
+myObj.showThis()
+console.log(myObj.name)
+console.log(window.name)
+
+ES6 中的箭头函数并不会创建其自身的执行上下文，所以箭头函数中的 this 取决于它的外部函数。
+因为箭头函数没有自己的执行上下文，所以箭头函数的 this 就是它外层函数的 this。
+```
+* 普通函数中的 this 默认指向全局对象 window
+1. 在严格模式下，默认执行一个函数，其函数的执行上下文中的 this 值是 undefined
 
 
 
