@@ -2384,6 +2384,119 @@ div  p {color:green;}
 3. 所以相对于重绘和重排，合成能大大提升绘制效率。
 
 
+## 变量提升：JavaScript代码是按顺序执行的吗？
+### 变量提升（Hoisting）
+```
+
+var myname = 'diamonds'
+这段代码你可以把它看成是两行代码组成的：
+var myname    //声明部分
+myname = 'diamonds'  //赋值部分
+
+
+
+
+function foo(){
+  console.log('foo')
+}
+
+var bar = function(){
+  console.log('bar')
+}
+第一个函数 foo 是一个完整的函数声明，也就是说没有涉及到赋值操作；
+第二个函数是先声明变量 bar，再把function(){console.log('bar')}赋值给 bar。
+```
+* 所谓的变量提升，是指在 JavaScript 代码执行过程中，JavaScript 引擎把变量的声明部分和函数的声明部分提升到代码开头的“行为”。
+* 变量被提升后，会给变量设置默认值，这个默认值就是我们熟悉的 undefined。
+### JavaScript 代码的执行流程
+* 实际上变量和函数声明在代码里的位置是不会改变的，而且是在编译阶段被 JavaScript 引擎放入内存中。
+#### 编译阶段
+* 输入一段代码，经过编译后，会生成两部分内容：执行上下文（Execution context）和可执行代码。
+* 执行上下文是 JavaScript 执行一段代码时的运行环境，比如调用一个函数，就会进入这个函数的执行上下文，确定该函数在执行期间用到的诸如 this、变量、对象以及函数等。
+* 在执行上下文中存在一个变量环境的对象（Viriable Environment），该对象中保存了变量提升的内容
+```
+
+showName()
+console.log(myname)
+var myname = 'diamonds'
+function showName() {
+    console.log('函数showName被执行');
+}
+第 1 行和第 2 行，由于这两行代码不是声明操作，所以 JavaScript 引擎不会做任何处理；
+第 3 行，由于这行是经过 var 声明的，因此 JavaScript 引擎将在环境对象中创建一个名为 myname 的属性，并使用 undefined 对其初始化；
+第 4 行，JavaScript 引擎发现了一个通过 function 定义的函数，所以它将函数定义存储到堆 (HEAP）中，并在环境对象中创建一个 showName 的属性，然后将该属性值指向堆中函数的位置（不了解堆也没关系，JavaScript 的执行堆和执行栈我会在后续文章中介绍）。
+
+ JavaScript 引擎会把声明以外的代码编译为字节码
+```
+#### 执行阶段
+```
+
+showName()
+console.log(myname)
+var myname = 'diamonds'
+function showName() {
+    console.log('函数showName被执行');
+}
+
+当执行到 showName 函数时，JavaScript 引擎便开始在变量环境对象中查找该函数，由于变量环境对象中存在该函数的引用，所以 JavaScript 引擎便开始执行该函数，并输出“函数 showName 被执行”结果。
+接下来打印“myname”信息，JavaScript 引擎继续在变量环境对象中查找该对象，由于变量环境存在 myname 变量，并且其值为 undefined，所以这时候就输出 undefined。
+接下来执行第 3 行，把“diamonds”赋给 myname 变量，赋值后变量环境中的 myname 属性值改变为“diamonds
+
+
+```
+* 实际上，编译阶段和执行阶段都是非常复杂的，包括了词法分析、语法解析、代码优化、代码生成等
+### 代码中出现相同的变量或者函数怎么办？
+
+```
+
+function showName() {
+    console.log('diamond');
+}
+showName();
+function showName() {
+    console.log('diamonds');
+}
+showName(); 
+
+
+
+首先是编译阶段。遇到了第一个 showName 函数，会将该函数体存放到变量环境中。
+接下来是第二个 showName 函数，继续存放至变量环境中，但是变量环境中已经存在一个 showName 函数了，此时，第二个 showName 函数会将第一个 showName 函数覆盖掉。这样变量环境中就只存在第二个 showName 函数了。
+接下来是执行阶段。先执行第一个 showName 函数，但由于是从变量环境中查找 showName 函数，而变量环境中只保存了第二个 showName 函数，所以最终调用的是第二个函数，打印的内容是“diamonds”。第二次执行 showName 函数也是走同样的流程，所以输出的结果也是“diamonds”。
+
+
+```
+
+
+## 调用栈：为什么JavaScript代码会出现栈溢出？
+* 当一段代码被执行时，JavaScript 引擎先会对其进行编译，并创建执行上下文。
+1. 当 JavaScript 执行全局代码的时候，会编译全局代码并创建全局执行上下文，而且在整个页面的生存周期内，全局执行上下文只有一份。
+2. 当调用一个函数的时候，函数体内的代码会被编译，并创建函数执行上下文，一般情况下，函数执行结束之后，创建的函数执行上下文会被销毁。
+3. 当使用 eval 函数的时候，eval 的代码也会被编译，并创建执行上下文。
+* 用栈就是用来管理函数调用关系的一种数据结构。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
