@@ -2953,26 +2953,168 @@ var myName = “diamond”
 
 
 
+## 消息队列和事件循环：页面是怎么“活”起来的？
+* 主线程非常繁忙，既要处理 DOM，又要计算样式，还要处理布局，同时还需要处理 JavaScript 任务以及各种输入事件。要让这么多不同类型的任务在主线程中有条不紊地执行，这就需要一个系统来统筹调度这些任务，这个统筹调度系统就是我们今天要讲的消息队列和事件循环系统。
+* 消息队列中的任务类型：如输入事件（鼠标滚动、点击、移动）、微任务、文件读写、WebSocket、JavaScript 定时器等等。除此之外，消息队列中还包含了很多与页面相关的事件，如 JavaScript 执行、解析 DOM、样式计算、布局计算、CSS 动画等。以上这些事件都是在主线程中执行的，所以在编写 Web 应用时，你还需要衡量这些事件所占用的时长，并想办法解决单个任务占用主线程过久的问题。
+* 如何安全退出？确定要退出当前页面时，页面主线程会设置一个退出标志的变量，在每次执行完一个任务时，判断是否有设置退出标志。如果设置了，那么就直接中断当前的所有任务，退出线程
+* 通常我们把消息队列中的任务称为宏任务，每个宏任务中都包含了一个微任务队列，在执行宏任务的过程中，如果 DOM 有变化，那么就会将该变化添加到微任务列表中，这样就不会影响到宏任务的继续执行，因此也就解决了执行效率的问题。
+* 等宏任务中的主要功能都直接完成之后，这时候，渲染引擎并不着急去执行下一个宏任务，而是执行当前宏任务中的微任务，因为 DOM 变化的事件都保存在这些微任务队列中，这样也就解决了实时性问题。
+## WebAPI：setTimeout是如何实现的？
+* 定时器，用来指定某个函数在多少毫秒之后执行。它会返回一个整数，表示定时器的编号，同时你还可以通过该编号来取消这个定时器。
+### 浏览器怎么实现 setTimeout
+* 渲染进程中所有运行在主线程上的任务都需要先添加到消息队列，然后事件循环系统再按照顺序执行消息队列中的任务。下面我们来看看那些典型的事件：
+1. 当接收到 HTML 文档数据，渲染引擎就会将“解析 DOM”事件添加到消息队列中，
+2. 当用户改变了 Web 页面的窗口大小，渲染引擎就会将“重新布局”的事件添加到消息队列中。
+3. 当触发了 JavaScript 引擎垃圾回收机制，渲染引擎会将“垃圾回收”任务添加到消息队列中。
+4. 同样，如果要执行一段异步 JavaScript 代码，也是需要将执行任务添加到消息队列中。
+* 在 Chrome 中除了正常使用的消息队列之外，还有另外一个消息队列（其实是一个hashmap结构，等到执行这个结构的时候，会计算hashmap中的每个任务是否到期了，到期了就去执行，直到所有到期的任务都执行结束，才会进入下一轮循环！），这个队列中维护了需要延迟执行的任务列表，包括了定时器和 Chromium 内部一些需要延迟执行的任务。所以当通过 JavaScript 创建一个定时器时，渲染进程会将该定时器的回调任务添加到延迟队列中。
+* 浏览器内部实现取消定时器的操作也是非常简单的，就是直接从延迟队列中，通过 ID 查找到对应的任务，然后再将其从队列中删除掉就可以了。
+* 使用 setTimeout 的一些注意事项
+1. 如果当前任务执行时间过久，会影响定时器任务的执行
+2. 如果 setTimeout 存在嵌套调用，那么系统会设置最短时间间隔为 4 毫秒。在 Chrome 中，定时器被嵌套调用 5 次以上，系统会判断该函数方法被阻塞了，如果定时器的调用时间间隔小于 4 毫秒，那么浏览器会将每次调用的时间间隔设置为 4 毫秒。所以，一些实时性较高的需求就不太适合使用 setTimeout 了，比如你用 setTimeout 来实现 JavaScript 动画就不是一个很好的主意。
+3. 未激活的页面，setTimeout 执行最小间隔是 1000 毫秒，目的是为了优化后台页面的加载损耗以及降低耗电量。
+4. 延时执行时间有最大值。Chrome、Safari、Firefox 都是以 32 个 bit 来存储延时值的，32bit 最大只能存放的数字是 2147483647 毫秒，这就意味着，如果 setTimeout 设置的延迟值大于 2147483647 毫秒（大约 24.8 天）时就会溢出，那么相当于延时值被设置为 0 了，这导致定时器会被立即执行。
+5. 使用 setTimeout 设置的回调函数中的 this 不符合直觉。如果被 setTimeout 推迟执行的回调函数是某个对象的方法，那么该方法中的 this 关键字将指向全局环境，而不是定义时所在的那个对象。
+```
+
+var name= 1;
+var MyObj = {
+  name: 2,
+  showName: function(){
+    console.log(this.name);
+  }
+}
+setTimeout(MyObj.showName,1000)
+这里输出的是 1，因为这段代码在编译的时候，执行上下文中的 this 会被设置为全局 window，如果是严格模式，会被设置为 undefined。
+那么该怎么解决这个问题呢？通常可以使用下面这两种方法。
+
+
+//箭头函数
+setTimeout(() => {
+    MyObj.showName()
+}, 1000);
+//或者function函数
+setTimeout(function() {
+  MyObj.showName();
+}, 1000)
 
 
 
+setTimeout(MyObj.showName.bind(MyObj), 1000)
+```
+
+## WebAPI：XMLHttpRequest是怎么实现的？
+
+### 回调函数 VS 系统调用栈
+* 将一个函数作为参数传递给另外一个函数，那作为参数的这个函数就是回调函数。
+```
+
+
+let callback = function(){
+    console.log('i am do homework')
+}
+function doWork(cb) {
+    console.log('start do work')
+    cb()
+    console.log('end do work')
+}
+doWork(callback)
+
+上面的回调方法有个特点，就是回调函数 callback 是在主函数 doWork 返回之前执行的，我们把这个回调过程称为同步回调。
 
 
 
+let callback = function(){
+    console.log('i am do homework')
+}
+function doWork(cb) {
+    console.log('start do work')
+    setTimeout(cb,1000)   
+    console.log('end do work')
+}
+doWork(callback)
+
+在这个例子中，我们使用了 setTimeout 函数让 callback 在 doWork 函数执行结束后，又延时了 1 秒再执行，
+这次 callback 并没有在主函数 doWork 内部被调用，我们把这种回调函数在主函数外部执行的过程称为异步回调。
+```
+* 消息队列和主线程循环机制保证了页面有条不紊地运行。那就是当循环系统在执行一个任务的时候，都要为这个任务维护一个系统调用栈。这个系统调用栈类似于 JavaScript 的调用栈，只不过系统调用栈是 Chromium 的开发语言 C++ 来维护的
+### XMLHttpRequest 运作机制
+```
 
 
+ function GetWebData(URL){
+    /**
+     * 1:新建XMLHttpRequest请求对象
+     */
+    let xhr = new XMLHttpRequest()
+
+    /**
+     * 2:注册相关事件回调处理函数 
+     */
+    xhr.onreadystatechange = function () {
+        switch(xhr.readyState){
+          case 0: //请求未初始化
+            console.log("请求未初始化")
+            break;
+          case 1://OPENED
+            console.log("OPENED")
+            break;
+          case 2://HEADERS_RECEIVED
+            console.log("HEADERS_RECEIVED")
+            break;
+          case 3://LOADING  
+            console.log("LOADING")
+            break;
+          case 4://DONE
+            if(this.status == 200||this.status == 304){
+                console.log(this.responseText);
+                }
+            console.log("DONE")
+            break;
+        }
+    }
+
+    xhr.ontimeout = function(e) { console.log('ontimeout') }
+    xhr.onerror = function(e) { console.log('onerror') }
+
+    /**
+     * 3:打开请求
+     */
+    xhr.open('Get', URL, true);//创建一个Get请求,采用异步
 
 
+    /**
+     * 4:配置参数
+     */
+    xhr.timeout = 3000 //设置xhr请求的超时时间
+    xhr.responseType = "text" //设置响应返回的数据格式
+    xhr.setRequestHeader("X_TEST","time.geekbang")
+
+    /**
+     * 5:发送请求
+     */
+    xhr.send();
+}
+
+```
+* 渲染进程会将请求发送给网络进程，然后网络进程负责资源的下载，等网络进程接收到数据之后，就会利用 IPC 来通知渲染进程；渲染进程接收到消息之后，会将 xhr 的回调函数封装成任务并添加到消息队列中，等主线程循环系统执行到该任务的时候，就会根据相关的状态来调用对应的回调函数。
+### XMLHttpRequest 使用过程中的“坑”
+* 跨域问题
+* HTTPS 混合内容的问题
+1. HTTPS 混合内容是 HTTPS 页面中包含了不符合 HTTPS 安全要求的内容，比如包含了 HTTP 资源，通过 HTTP 加载的图像、视频、样式表、脚本等，都属于混合内容。
+2. 通过 HTML 文件加载的混合资源，虽然给出警告，但大部分类型还是能加载的。而使用 XMLHttpRequest 请求时，浏览器认为这种请求可能是攻击者发起的，会阻止此类危险的请求。
 
 
+## 宏任务和微任务：不是所有任务都是一个待遇
 
-
-
-
-
-
-
-
+### 宏任务
+* 页面中的大部分任务都是在主线程上执行的，这些任务包括了：
+1. 渲染事件（如解析 DOM、计算布局、绘制）；
+2. 用户交互事件（如鼠标点击、滚动页面、放大缩小等）；
+3. JavaScript 脚本执行事件；
+4. 网络请求完成、文件读写完成事件。
+* 为了协调这些任务有条不紊地在主线程上执行，页面进程引入了消息队列和事件循环机制，渲染进程内部会维护多个消息队列，比如延迟执行队列和普通的消息队列。
+* 然后主线程采用一个 for 循环，不断地从这些任务队列中取出任务并执行任务。我们把这些消息队列中的任务称为宏任务。
 
 
 
