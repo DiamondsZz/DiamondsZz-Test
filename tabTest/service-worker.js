@@ -10,7 +10,7 @@ if (serviceWorker) {
   // port2给对方
   serviceWorker.postMessage("hello world!", [channel.port2]);
 }
-console.log(this);
+//console.log(this);
 // sw
 this.addEventListener("message", (ev) => {
   console.log("sw receive message..");
