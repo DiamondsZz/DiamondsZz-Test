@@ -75,10 +75,6 @@ self.addEventListener("message", (ev) => {
 ```
 ## Beacon
 ```
-
-
-
-
 用于将异步和非阻塞请求发送到服务器。信标（Beacon ）请求使用HTTP协议中的POST方法，请求通常不需要响应。这个请求被保证在，页面的unload状态从发起到完成之前，被发送。而并不需要一个阻塞请求，例如 XMLHttpRequest 。
 
 Beacon API 的示例用例是记录活动并向服务器发送分析数据。
@@ -91,6 +87,6 @@ Beacon 接口满足了分析和诊断代码的需要，这些代码通常会尝�
 但是上述技术不仅代表了较差的编码模式，其中一些还是不可靠的，会导致下一个导航的页面加载性能较差的感觉。信标 API 提供了解决这些问题的标准方法。
 
 
- Navigator.sendBeacon() 方法用于在全局浏览上下文中向服务器发送数据信标。该方法有两个参数，URL和要在请求中发送的数据data。data参数是可选的，其类型可以是 ArrayBufferView、Blob、DOMString 或FormData。如果浏览器成功的以队列形式排列了用于传递的请求，则该方法返回“true”，否则返回“false”。
+Navigator.sendBeacon() 方法用于在全局浏览上下文中向服务器发送数据信标。该方法有两个参数，URL和要在请求中发送的数据data。data参数是可选的，其类型可以是 ArrayBufferView、Blob、DOMString 或FormData。如果浏览器成功的以队列形式排列了用于传递的请求，则该方法返回“true”，否则返回“false”。
 
 ```
