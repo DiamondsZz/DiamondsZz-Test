@@ -1,3 +1,4 @@
+/* 
 {
   a = 1;
   function a() {}
@@ -6,3 +7,11 @@
 }
 
 console.log(a);
+ */
+
+/* let b = function a() {
+  console.log(a);
+};
+console.log(a);
+b();
+ */
