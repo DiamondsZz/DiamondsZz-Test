@@ -150,8 +150,53 @@ document.addEventListener("visibilitychange", function() {
 
 出于兼容性原因，请确保使用  document.addEventListener 而不是window.addEventListener来注册回调。 Safari <14.0仅支持前者。
 ```
+## 剪切板(http://www.ruanyifeng.com/)
+
+### Document.execCommand() 方法
+```
+document.execCommand('copy')（复制）
+document.execCommand('cut')（剪切）
+document.execCommand('paste')（粘贴）
+
+Document.execCommand()方法虽然方便，但是有一些缺点。
+
+首先，它只能将选中的内容复制到剪贴板，无法向剪贴板任意写入内容。
+
+其次，它是同步操作，如果复制/粘贴大量数据，页面会出现卡顿。有些浏览器还会跳出提示框，要求用户许可，这时在用户做出选择前，页面会失去响应。
+
+```
+### 异步 Clipboard API
+```
+Clipboard API 是下一代的剪贴板操作方法，比传统的document.execCommand()方法更强大、更合理。
+
+它的所有操作都是异步的，返回 Promise 对象，不会造成页面卡顿。而且，它可以将任意内容（比如图片）放入剪贴板。
+
+navigator.clipboard属性返回 Clipboard 对象，所有操作都通过这个对象进行。
+
+const clipboardObj = navigator.clipboard
+
+如果navigator.clipboard属性返回undefined，就说明当前浏览器不支持这个 API。
+
+由于用户可能把敏感数据（比如密码）放在剪贴板，允许脚本任意读取会产生安全风险，所以这个 API 的安全限制比较多。
+
+首先，Chrome 浏览器规定，只有 HTTPS 协议的页面才能使用这个 API。不过，开发环境（localhost）允许使用非加密协议。
+
+其次，调用时需要明确获得用户的许可。权限的具体实现使用了 Permissions API，跟剪贴板相关的有两个权限：clipboard-write（写权限）和clipboard-read（读权限）。"写权限"自动授予脚本，而"读权限"必须用户明确同意给予。也就是说，写入剪贴板，脚本可以自动完成，但是读取剪贴板时，浏览器会弹出一个对话框，询问用户是否同意读取。
 
 
+
+
+
+
+Clipboard.readText()方法用于复制剪贴板里面的文本数据。
+Clipboard.writeText()方法用于将文本内容写入剪贴板。
+
+
+
+
+
+
+```
 
 
 
