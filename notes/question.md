@@ -115,7 +115,7 @@ window.requestIdleCallback()方法将在浏览器的空闲时段内调用的函�
 
 ```
 
-## 浏览器帧原理
+## 浏览器渲染
 
 ### 渲染页面
 * 五大关键渲染路径
@@ -131,6 +131,25 @@ window.requestIdleCallback()方法将在浏览器的空闲时段内调用的函�
 ### 帧
 * 在视频领域，电影、电视、数字视频等可视为随时间连续变换的许多张画面，其中帧是指每一张画面。
 
+## visibilitychange
+```
+当其选项卡的内容变得可见或被隐藏时，会在文档上触发 visibilitychange (能见度更改)事件。
+
+document.addEventListener("visibilitychange", function() {
+  console.log( document.visibilityState );
+});
+document.addEventListener("visibilitychange", function() {
+  if (document.visibilityState === 'visible') {
+    backgroundMusic.play();
+  } else {
+    backgroundMusic.pause();
+  }
+});
+
+当 visibleStateState 属性的值转换为 hidden 时，Safari不会按预期触发visibilitychange； 因此，在这种情况下，您还需要包含代码以侦听 pagehide 事件。
+
+出于兼容性原因，请确保使用  document.addEventListener 而不是window.addEventListener来注册回调。 Safari <14.0仅支持前者。
+```
 
 
 
