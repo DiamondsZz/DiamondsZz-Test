@@ -90,3 +90,16 @@ Beacon 接口满足了分析和诊断代码的需要，这些代码通常会尝�
 Navigator.sendBeacon() 方法用于在全局浏览上下文中向服务器发送数据信标。该方法有两个参数，URL和要在请求中发送的数据data。data参数是可选的，其类型可以是 ArrayBufferView、Blob、DOMString 或FormData。如果浏览器成功的以队列形式排列了用于传递的请求，则该方法返回“true”，否则返回“false”。
 
 ```
+## unhandledrejection
+```
+当Promise 被 reject 且没有 reject 处理器的时候，会触发 unhandledrejection 事件；
+
+window.addEventListener("unhandledrejection", event => {
+  console.warn(`UNHANDLED PROMISE REJECTION: ${event.reason}`);
+});
+
+window.onunhandledrejection = event => {
+  console.warn(`UNHANDLED PROMISE REJECTION: ${event.reason}`);
+};
+
+```
