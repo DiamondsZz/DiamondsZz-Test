@@ -197,7 +197,207 @@ Clipboard.writeText()方法用于将文本内容写入剪贴板。
 
 
 ```
+## grid布局(http://www.ruanyifeng.com/)
+```
+指定一个容器采用网格布局。注意，设为网格布局以后，容器子元素（项目）的float、display: inline-block、display: table-cell、vertical-align和column-*等设置都将失效。
+div {
+  display: grid;
+}
 
+
+默认情况下，容器元素都是块级元素，但也可以设成行内元素。
+div {
+  display: inline-grid;
+}
+
+
+
+
+
+
+
+
+容器属性:
+容器指定了网格布局以后，接着就要划分行和列。grid-template-columns属性定义每一列的列宽，grid-template-rows属性定义每一行的行高。
+.container {
+  display: grid;
+  grid-template-columns: 100px 100px 100px;
+  grid-template-rows: 100px 100px 100px;
+}
+除了使用绝对单位，也可以使用百分比。
+.container {
+  display: grid;
+  grid-template-columns: 33.33% 33.33% 33.33%;
+  grid-template-rows: 33.33% 33.33% 33.33%;
+}
+有时候，重复写同样的值非常麻烦，尤其网格很多时。这时，可以使用repeat()函数，简化重复的值。上面的代码用repeat()改写如下。
+.container {
+  display: grid;
+  grid-template-columns: repeat(3, 33.33%); //grid-template-columns: repeat(2, 100px 20px 80px);
+  grid-template-rows: repeat(3, 33.33%);
+}
+
+
+有时，单元格的大小是固定的，但是容器的大小不确定。如果希望每一行（或每一列）容纳尽可能多的单元格，这时可以使用auto-fill关键字表示自动填充。
+.container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 100px);
+}
+
+为了方便表示比例关系，网格布局提供了fr关键字（fraction 的缩写，意为"片段"）。如果两列的宽度分别为1fr和2fr，就表示后者是前者的两倍。
+.container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+fr可以与绝对长度的单位结合使用，这时会非常方便。
+.container {
+  display: grid;
+  grid-template-columns: 150px 1fr 2fr;
+}
+
+
+minmax()函数产生一个长度范围，表示长度就在这个范围之中。它接受两个参数，分别为最小值和最大值。
+grid-template-columns: 1fr 1fr minmax(100px, 1fr);
+
+
+auto关键字表示由浏览器自己决定长度。
+grid-template-columns: 100px auto 100px;
+
+
+grid-template-columns属性和grid-template-rows属性里面，还可以使用方括号，指定每一根网格线的名字，方便以后的引用。
+.container {
+  display: grid;
+  grid-template-columns: [c1] 100px [c2] 100px [c3] auto [c4];
+  grid-template-rows: [r1] 100px [r2] 100px [r3] auto [r4];
+}
+
+
+传统的十二网格布局
+grid-template-columns: repeat(12, 1fr);
+
+
+grid-row-gap属性设置行与行的间隔（行间距），grid-column-gap属性设置列与列的间隔（列间距）。
+.container {
+  grid-row-gap: 20px;
+  grid-column-gap: 20px;
+}
+grid-gap属性是grid-column-gap和grid-row-gap的合并简写形式，语法如下。
+.container {
+  grid-gap: 20px 20px;
+}
+
+
+网格布局允许指定"区域"（area），一个区域由单个或多个单元格组成。grid-template-areas属性用于定义区域。
+.container {
+  display: grid;
+  grid-template-columns: 100px 100px 100px;
+  grid-template-rows: 100px 100px 100px;
+  grid-template-areas: 'a b c'
+                       'd e f'
+                       'g h i';
+}
+上面代码先划分出9个单元格，然后将其定名为a到i的九个区域，分别对应这九个单元格。
+多个单元格合并成一个区域的写法如下。
+grid-template-areas: 'a a a'
+                     'b b b'
+                     'c c c';
+					 
+					 
+grid-template-areas: "header header header"
+                     "main main sidebar"
+                     "footer footer footer";					 
+上面代码中，顶部是页眉区域header，底部是页脚区域footer，中间部分则为main和sidebar。
+如果某些区域不需要利用，则使用"点"（.）表示。
+grid-template-areas: 'a . c'
+                     'd . f'
+                     'g . i';
+注意，区域的命名会影响到网格线。每个区域的起始网格线，会自动命名为区域名-start，终止网格线自动命名为区域名-end。
+
+
+
+					 
+划分网格以后，容器的子元素会按照顺序，自动放置在每一个网格。默认的放置顺序是"先行后列"，即先填满第一行，再开始放入第二行				 
+这个顺序由grid-auto-flow属性决定，默认值是row，即"先行后列"。也可以将它设成column，变成"先列后行"。					 
+设为row dense，表示"先行后列"，并且尽可能紧密填满，尽量不出现空格。					 
+					 
+					 
+justify-items属性设置单元格内容的水平位置（左中右），align-items属性设置单元格内容的垂直位置（上中下）。					 
+place-items属性是align-items属性和justify-items属性的合并简写形式。					 
+place-items: start end;					 
+
+
+justify-content属性是整个内容区域在容器里面的水平位置（左中右），align-content属性是整个内容区域的垂直位置（上中下）。
+place-content属性是align-content属性和justify-content属性的合并简写形式。
+place-content: space-around space-evenly;
+
+
+
+
+
+
+
+------------------------------------------------------------------------
+
+
+项目属性:
+grid-column-start属性：左边框所在的垂直网格线
+grid-column-end属性：右边框所在的垂直网格线
+grid-row-start属性：上边框所在的水平网格线
+grid-row-end属性：下边框所在的水平网格线
+
+这四个属性的值，除了指定为第几个网格线，还可以指定为网格线的名字。
+这四个属性的值还可以使用span关键字，表示"跨越"，即左右边框（上下边框）之间跨越多少个网格。
+使用这四个属性，如果产生了项目的重叠，则使用z-index属性指定项目的重叠顺序。
+grid-column属性是grid-column-start和grid-column-end的合并简写形式，grid-row属性是grid-row-start属性和grid-row-end的合并简写形式。
+.item-1 {
+  grid-column: 1 / 3;
+  grid-row: 1 / 2;
+}
+/* 等同于 */
+.item-1 {
+  grid-column-start: 1;
+  grid-column-end: 3;
+  grid-row-start: 1;
+  grid-row-end: 2;
+}
+.item-1 {
+  grid-column: 1 / 3;
+  grid-row: 1 / 2;
+}
+/* 等同于 */
+.item-1 {
+  grid-column-start: 1;
+  grid-column-end: 3;
+  grid-row-start: 1;
+  grid-row-end: 2;
+}
+斜杠以及后面的部分可以省略，默认跨越一个网格。
+
+
+
+
+
+grid-area属性指定项目放在哪一个区域。
+.item-1 {
+  grid-area: e;
+}
+grid-area属性还可用作grid-row-start、grid-column-start、grid-row-end、grid-column-end的合并简写形式，直接指定项目的位置。
+.item-1 {
+  grid-area: 1 / 1 / 3 / 3;
+}
+
+
+
+justify-self属性设置单元格内容的水平位置（左中右），跟justify-items属性的用法完全一致，但只作用于单个项目。
+align-self属性设置单元格内容的垂直位置（上中下），跟align-items属性的用法完全一致，也是只作用于单个项目。
+place-self属性是align-self属性和justify-self属性的合并简写形式。
+
+
+
+
+
+					 
+```
 
 
 
