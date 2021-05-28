@@ -6,13 +6,24 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, ref, toRef, toRefs, reactive } from "vue";
 import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
 
 export default defineComponent({
   name: "Home",
   components: {
-    HelloWorld
-  }
+    HelloWorld,
+  },
+  setup() {
+    const a = ref(0);
+    const b = reactive({
+      a: 1,
+      b: 2,
+    });
+    const c = toRef(b, "a");
+    c.value++;
+    b.a++;
+    console.log(c.value);
+  },
 });
 </script>
