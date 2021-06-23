@@ -21,9 +21,11 @@ export default defineComponent({
       b: 2,
     });
     const c = toRef(b, "a");
-    c.value++;
-    b.a++;
-    console.log(c.value);
+    const d = { a: 3 };
+    const e = toRef(d, "a");
+
+    d.a++;
+    console.log(e.value);
   },
 });
 </script>
